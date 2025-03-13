@@ -7,12 +7,8 @@ public class SaleItemValidator : AbstractValidator<SaleItem>
 {
     public SaleItemValidator()
     {
-        RuleFor(item => item.ProductId)
-            .NotEmpty().WithMessage("Product ID is required.");
-
-        RuleFor(item => item.ProductName)
-            .NotEmpty().WithMessage("Product name is required.")
-            .MaximumLength(100).WithMessage("Product name cannot be longer than 100 characters.");
+        RuleFor(item => item.Product)
+            .IsInEnum().WithMessage("Product is not valid.");
 
         RuleFor(item => item.Quantity)
             .GreaterThan(0).WithMessage("Quantity must be greater than zero.");

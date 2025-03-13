@@ -15,10 +15,12 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
 
         builder.Property(s => s.SaleNumber).IsRequired().HasMaxLength(50);
         builder.Property(s => s.SaleDate).IsRequired();
-        builder.Property(s => s.CustomerId).IsRequired();
-        builder.Property(s => s.CustomerName).IsRequired().HasMaxLength(100);
-        builder.Property(s => s.BranchId).IsRequired();
-        builder.Property(s => s.BranchName).IsRequired().HasMaxLength(100);
+        builder.Property(u => u.Customer)
+            .HasConversion<string>()
+            .HasMaxLength(30);
+        builder.Property(u => u.Branch)
+            .HasConversion<string>()
+            .HasMaxLength(30);
         builder.Property(s => s.IsCancelled).IsRequired();
 
         builder.HasMany(s => s.Items)

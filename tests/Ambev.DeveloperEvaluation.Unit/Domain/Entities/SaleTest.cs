@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities;
@@ -37,12 +38,12 @@ public class SaleTests
         // Arrange
         var sale = SaleTestData.GenerateValidSale();
         var productId = Guid.NewGuid();
-        var productName = "Product A";
+        var product = Product.ProductA;
         var unitPrice = 100m;
         sale.Items.Clear(); // Reset items
 
         // Act
-        sale.AddItem(productId, productName, quantity, unitPrice);
+        sale.AddItem(productId, product, quantity, unitPrice);
 
         // Assert
         var addedItem = Assert.Single(sale.Items);
@@ -59,12 +60,12 @@ public class SaleTests
         // Arrange
         var sale = SaleTestData.GenerateValidSale();
         var productId = Guid.NewGuid();
-        var productName = "Product B";
+        var product = Product.ProductA;
         var unitPrice = 100m;
         sale.Items.Clear(); // Reset items
 
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() =>
-            sale.AddItem(productId, productName, 21, unitPrice));
+            sale.AddItem(productId, product, 21, unitPrice));
     }
 }

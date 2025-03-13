@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Common;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.Domain.Entities;
 
@@ -19,11 +20,10 @@ public class SaleItem: BaseEntity
     /// <summary>
     ///     Creates a new sale item instance.
     /// </summary>
-    public SaleItem(Guid saleId, Guid productId, string productName, int quantity, decimal unitPrice, decimal discount)
+    public SaleItem(Guid saleId, Product product, int quantity, decimal unitPrice, decimal discount)
     {
         SaleId = saleId;
-        ProductId = productId;
-        ProductName = productName;
+        Product = product;
         Quantity = quantity;
         UnitPrice = unitPrice;
         Discount = discount;
@@ -34,14 +34,9 @@ public class SaleItem: BaseEntity
     public Guid SaleId { get; set; }
 
     /// <summary>
-    ///     External identifier for the product.
-    /// </summary>
-    public Guid ProductId { get;  set; }
-
-    /// <summary>
     ///     Product name (denormalized for better performance).
     /// </summary>
-    public string ProductName { get;  set; }
+    public Product Product { get;  set; }
 
     /// <summary>
     ///     Quantity of the product purchased.

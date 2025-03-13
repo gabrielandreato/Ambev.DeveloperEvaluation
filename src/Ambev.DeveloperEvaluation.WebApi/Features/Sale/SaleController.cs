@@ -1,7 +1,6 @@
-﻿using Ambev.DeveloperEvaluation.Application.Users.CreateUser;
+﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
-using Ambev.DeveloperEvaluation.WebApi.Features.Users.CreateUser;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -35,7 +34,7 @@ public class SaleController: BaseController
     [HttpPost]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateSaleResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateUser([FromBody] CreateSaleRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateSale([FromBody] CreateSaleRequest request, CancellationToken cancellationToken)
     {
         var validator = new CreateSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -43,14 +42,14 @@ public class SaleController: BaseController
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors);
         
-        var command = _mapper.Map<CreateUserCommand>(request);
+        var command = _mapper.Map<CreateSaleCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
         
-        return Created(string.Empty, new ApiResponseWithData<CreateUserResponse>
+        return Created(string.Empty, new ApiResponseWithData<CreateSaleResponse>
         {
             Success = true,
-            Message = "User created successfully",
-            Data = _mapper.Map<CreateUserResponse>(response)
+            Message = "Sale created successfully",
+            Data = _mapper.Map<CreateSaleResponse>(response)
         });
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Bogus;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
@@ -30,10 +31,8 @@ public static class SaleTestData
         .CustomInstantiator(f => new Sale())
         .RuleFor(s => s.SaleNumber, f => $"{f.Commerce.Ean13()}")
         .RuleFor(s => s.SaleDate, f => f.Date.Past())
-        .RuleFor(s => s.CustomerId, f => Guid.NewGuid())
-        .RuleFor(s => s.CustomerName, f => f.Person.FullName)
-        .RuleFor(s => s.BranchId, f => Guid.NewGuid())
-        .RuleFor(s => s.BranchName, f => f.Company.CompanyName())
+        .RuleFor(s => s.Customer, f => f.PickRandom(Customer.CustomerA, Customer.CustomerB, Customer.CustomerC))
+        .RuleFor(s => s.Branch, f => f.PickRandom(Branch.BranchA, Branch.BranchB, Branch.BranchC))
         .RuleFor(s => s.IsCancelled, f => f.Random.Bool())
         .RuleFor(s => s.Items, (f, sale) => GenerateSaleItems(sale.Id));
 
@@ -58,8 +57,7 @@ public static class SaleTestData
         var faker = new Faker<SaleItem>()
             .CustomInstantiator(f => new SaleItem(
                 saleId,
-                f.Random.Guid(),
-                f.Commerce.ProductName(),
+                f.PickRandom(Product.ProductA, Product.ProductB, Product.ProductC),
                 f.Random.Number(1, 5),
                 f.Random.Decimal(0m, 100m),
                 f.Random.Decimal(0m, 20m)
