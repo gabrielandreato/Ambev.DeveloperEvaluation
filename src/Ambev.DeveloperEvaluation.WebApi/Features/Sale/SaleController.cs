@@ -1,6 +1,8 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSale;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -51,5 +53,32 @@ public class SaleController: BaseController
             Message = "Sale created successfully",
             Data = _mapper.Map<CreateSaleResponse>(response)
         });
+    }
+
+    /// <summary>
+    /// Update a sale
+    /// </summary>
+    /// <param name="saleNumber">Sale identifier</param>
+    /// <param name="request">The sale update request</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The updated sale details</returns>
+    [HttpPut("{saleNumber}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleResponse>), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSale([FromRoute] string saleNumber,[FromBody] UpdateSaleRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new UpdateSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+        
+        var command = _mapper.Map<UpdateSaleCommand>(request);
+        
+        command.SaleNumber = saleNumber;
+        
+        var response = await _mediator.Send(command, cancellationToken);
+        
+        return Ok(response);
     }
 }

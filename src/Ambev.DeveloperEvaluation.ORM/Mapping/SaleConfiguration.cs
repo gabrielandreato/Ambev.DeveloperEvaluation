@@ -14,18 +14,25 @@ public class SaleConfiguration : IEntityTypeConfiguration<Sale>
         builder.HasKey(s => s.Id);
 
         builder.Property(s => s.SaleNumber).IsRequired().HasMaxLength(50);
+        
         builder.Property(s => s.SaleDate).IsRequired();
+        
         builder.Property(u => u.Customer)
             .HasConversion<string>()
             .HasMaxLength(30);
+        
         builder.Property(u => u.Branch)
             .HasConversion<string>()
             .HasMaxLength(30);
+        
         builder.Property(s => s.IsCancelled).IsRequired();
 
+        builder.HasIndex(s => s.SaleNumber)
+            .IsUnique();
+        
         builder.HasMany(s => s.Items)
             .WithOne()
-            .HasForeignKey(x => x.SaleId) 
-            .OnDelete(DeleteBehavior.Cascade); 
+            .HasForeignKey(x => x.SaleId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
