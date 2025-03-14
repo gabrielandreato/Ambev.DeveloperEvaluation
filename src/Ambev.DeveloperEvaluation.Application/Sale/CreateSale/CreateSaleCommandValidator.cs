@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
 
 /// <summary>
-/// Validator for CreateSaleRequest that defines validation rules for user creation.
+/// Validator for CreateSaleCommand that defines validation rules for user creation command.
 /// </summary>
-public class CreateSaleRequestValidator : AbstractValidator<CreateSaleRequest>
+public class CreateSaleCommandValidator: AbstractValidator<CreateSaleCommand>
 {
     /// <summary>
-    /// Validates instances of <see cref="CreateSaleRequest"/>.
+    /// Validates instances of <see cref="CreateSaleCommand"/>.
     /// </summary>
     /// <remarks>
     /// Validation rules include:
@@ -16,15 +16,15 @@ public class CreateSaleRequestValidator : AbstractValidator<CreateSaleRequest>
     /// - SaleDate: Must be in the past or present.
     /// - Customer: Must be a valid enumeration value.
     /// - Branch: Must be a valid enumeration value.
-    /// - Items: Must not be empty; each item validated using <see cref="CreateSaleItemRequestValidator"/>.
+    /// - Items: Must not be empty; each item validated using <see cref="CreateSaleItemCommandValidator"/>.
     /// </remarks>
-    public CreateSaleRequestValidator()
+    public CreateSaleCommandValidator()
     {
         RuleFor(sale => sale.SaleNumber).NotEmpty().Length(5, 20);
         RuleFor(sale => sale.SaleDate).LessThanOrEqualTo(DateTime.Now);
         RuleFor(sale => sale.Customer).IsInEnum();
         RuleFor(sale => sale.Branch).IsInEnum();
         RuleFor(sale => sale.Items).NotEmpty();
-        RuleForEach(sale => sale.Items).SetValidator(new CreateSaleItemRequestValidator());
+        RuleForEach(sale => sale.Items).SetValidator(new CreateSaleItemCommandValidator());
     }
 }

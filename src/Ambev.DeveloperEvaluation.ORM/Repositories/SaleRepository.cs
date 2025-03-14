@@ -43,6 +43,17 @@ public class SalesRepository : ISaleRepository
     {
         return await _context.Sale.Include(s => s.Items).FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
+    
+    /// <summary>
+    ///     Retrieves a sale Number its unique identifier
+    /// </summary>
+    /// <param name="saleNumber">Sale identifier</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The sale if found, null otherwise</returns>
+    public async Task<Sale?> GetBySaleNumberAsync(string saleNumber, CancellationToken cancellationToken = default)
+    {
+        return await _context.Sale.FirstOrDefaultAsync(s => s.SaleNumber == saleNumber, cancellationToken);
+    }
 
     /// <summary>
     ///     Retrieves all sales from the database
