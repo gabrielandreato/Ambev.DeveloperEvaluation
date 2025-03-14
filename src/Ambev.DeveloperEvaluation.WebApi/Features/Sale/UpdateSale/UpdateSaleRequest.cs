@@ -1,14 +1,17 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
-using Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSale;
 
 /// <summary>
-/// Represents a request to update a new sale item in the system.
+/// Represents a request to update a sale in the system.
 /// </summary>
 public class UpdateSaleRequest
 {
-
+    /// <summary>
+    /// Identifier for sale
+    /// </summary>
+    public string SaleNumber { get; set; }
+    
     /// <summary>
     /// Date when the sale was made.
     /// </summary>

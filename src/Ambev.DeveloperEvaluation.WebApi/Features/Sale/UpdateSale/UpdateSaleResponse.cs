@@ -13,7 +13,7 @@ public class UpdateSaleResponse
     /// <value>A GUID that uniquely identifies the Updated sale in the system.</value>
     public Guid Id { get; set; }
     /// <summary>
-    /// The unique identifier of the Updated sale
+    /// Identifier for sale
     /// </summary>
     public string SaleNumber { get; set; }
     

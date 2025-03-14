@@ -7,7 +7,7 @@ using MediatR;
 namespace Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 
 /// <summary>
-/// Command for updating a new sale.
+/// Command for updating a sale.
 /// </summary>
 /// <remarks>
 /// This command is used to capture the required data for updating a sale, 
@@ -22,6 +22,11 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 /// </remarks>
 public class UpdateSaleCommand: IRequest<UpdateSaleResult>
 {
+    /// <summary>
+    /// Unique identifier of the updated sale.
+    /// </summary>
+    public Guid Id { get; set; }
+    
     /// <summary>
     /// The sale identifier
     /// </summary>

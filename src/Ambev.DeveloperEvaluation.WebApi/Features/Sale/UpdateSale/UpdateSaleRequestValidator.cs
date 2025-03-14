@@ -19,6 +19,7 @@ public class UpdateSaleRequestValidator : AbstractValidator<UpdateSaleRequest>
     /// </remarks>
     public UpdateSaleRequestValidator()
     {
+        RuleFor(sale => sale.SaleNumber).NotEmpty().Length(5, 20);
         RuleFor(sale => sale.SaleDate).LessThanOrEqualTo(DateTime.Now);
         RuleFor(sale => sale.Customer).IsInEnum();
         RuleFor(sale => sale.Branch).IsInEnum();

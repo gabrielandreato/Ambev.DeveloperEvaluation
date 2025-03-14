@@ -42,10 +42,10 @@ public class UpdateSaleHandler: IRequestHandler<UpdateSaleCommand, UpdateSaleRes
 
         if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
         
-        var existentSale = await _saleRepository.GetBySaleNumberAsync(command.SaleNumber, cancellationToken);
+        var existentSale = await _saleRepository.GetByIdAsync(command.Id, cancellationToken);
         
         if (existentSale == null)
-            throw new InvalidOperationException($"Sale with number {command.SaleNumber} not found");
+            throw new InvalidOperationException($"Sale with identifier {command.Id} not found");
         
         _mapper.Map(command, existentSale);
         
