@@ -1,6 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetSale
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetListSale
 {
     /// <summary>
     /// Represents a request to get a list of sales in the system with optional filters.

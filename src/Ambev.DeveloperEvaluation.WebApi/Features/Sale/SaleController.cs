@@ -1,9 +1,11 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.DeleteSale;
 using Ambev.DeveloperEvaluation.Application.Sale.GetListSale;
 using Ambev.DeveloperEvaluation.Application.Sale.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetListSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSale;
 using AutoMapper;
@@ -142,4 +144,27 @@ public class SaleController: BaseController
             Data = _mapper.Map<List<GetListSaleResponse>>(response)
         });
     }
+    
+    /// <summary>
+    /// Delete a sale
+    /// </summary>
+    /// <param name="id">Unique identifier of the sale</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>A response indicating the result of the delete operation</returns>
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> DeleteSale([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var command = new DeleteSaleCommand { Id = id };
+            
+        var response = await _mediator.Send(command, cancellationToken);
+
+        if (!response)
+            return BadRequest(new ApiResponse { Success = false, Message = "Failed to delete sale, sale not found" });
+
+        return NoContent();
+    }
+    
+    
 }
