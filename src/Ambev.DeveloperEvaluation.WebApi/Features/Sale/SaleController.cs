@@ -165,6 +165,36 @@ public class SaleController: BaseController
 
         return NoContent();
     }
-    
-    
+
+
+    /// <summary>
+    /// Adds a new item to an existing sale
+    /// </summary>
+    /// <param name="saleId">The ID of the sale to which the item should be added</param>
+    /// <param name="request">The request containing item details to be added</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>A response indicating the outcome of the operation</returns>
+    [HttpPost("{saleId}/items")]
+    [ProducesResponseType(typeof(ApiResponseWithData<CreateSaleItemResponse>), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> CreateSaleItem([FromRoute] Guid saleId, [FromBody] CreateSaleItemRequest request, CancellationToken cancellationToken)
+    {
+        var validator = new CreateSaleItemRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<CreateSaleItemCommand>(request);
+        command.SaleId = saleId;
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Created(string.Empty, new ApiResponseWithData<CreateSaleItemResponse>
+        {
+            Success = true,
+            Message = "Item added to sale successfully",
+            Data = _mapper.Map<CreateSaleItemResponse>(response)
+        });
+    }
 }
+    
