@@ -95,28 +95,28 @@ public class SaleController: BaseController
     /// <param name="id">Unique identifier sale</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A sale from requested id</returns>
-    // [HttpGet("{id}")]
-    // [ProducesResponseType(typeof(ApiResponseWithData<GetSaleResponse>), StatusCodes.Status204NoContent)]
-    // [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
-    // public async Task<IActionResult> GetSale([FromRoute] Guid id, CancellationToken cancellationToken)
-    // {
-    //     var validator = new GetSaleRequestValidator();
-    //     var validationResult = await validator.ValidateAsync(request, cancellationToken);
-    //
-    //     if (!validationResult.IsValid)
-    //         return BadRequest(validationResult.Errors);
-    //     
-    //     var command = _mapper.Map<GetSaleCommand>(request);
-    //
-    //     command.Id = id;
-    //     
-    //     var response = await _mediator.Send(command, cancellationToken);
-    //     
-    //     return Ok(new ApiResponseWithData<GetSaleResponse>
-    //     {
-    //         Success = true,
-    //         Message = "Sale retrieved successfully",
-    //         Data = _mapper.Map<GetSaleResponse>(response)
-    //     });
-    // }
+    [HttpGet("{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetSaleResponse>), StatusCodes.Status204NoContent)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetSale([FromRoute] Guid id, CancellationToken cancellationToken)
+    {
+        var request = new GetSaleRequest() { Id = id };
+        
+        var validator = new GetSaleRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+    
+        if (!validationResult.IsValid)
+            return BadRequest(validationResult.Errors);
+        
+        var command = _mapper.Map<GetSaleCommand>(request);
+        
+        var response = await _mediator.Send(command, cancellationToken);
+        
+        return Ok(new ApiResponseWithData<GetSaleResponse>
+        {
+            Success = true,
+            Message = "Sale retrieved successfully",
+            Data = _mapper.Map<GetSaleResponse>(response)
+        });
+    }
 }
