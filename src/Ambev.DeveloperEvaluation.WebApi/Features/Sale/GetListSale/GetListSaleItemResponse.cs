@@ -5,7 +5,7 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetSale;
 /// <summary>
 /// API response model for Sale items in GetSale operation
 /// </summary>
-public class GetSaleItemResponse
+public class GetListSaleItemResponse
 {
     /// <summary>
     ///     Unique sale item identifier.

@@ -1,7 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
 using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.TestData;
 using AutoMapper;
@@ -39,7 +38,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
             var command = UpdateSaleHandlerTestData.GenerateValidCommand();
             var existentSale = new Sale
             {
-                Id = Guid.NewGuid(),
+                Id = command.Id,
                 SaleNumber = command.SaleNumber,
                 SaleDate = DateTime.Now,
             };
@@ -53,7 +52,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
                 Branch = command.Branch,
             };
 
-            _saleRepository.GetBySaleNumberAsync(command.SaleNumber, Arg.Any<CancellationToken>())
+            _saleRepository.GetByIdAsync(command.Id, Arg.Any<CancellationToken>())
                 .Returns(existentSale);
 
             _mapper.Map(command, existentSale).Returns(existentSale);
@@ -87,14 +86,14 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
         /// <summary>
         /// Tests that trying to update a non-existing sale throws an InvalidOperationException.
         /// </summary>
-        [Fact(DisplayName = "Given non-existing sale number When updating sale Then throws InvalidOperationException")]
-        public async Task Handle_NonExistingSaleNumber_ThrowsInvalidOperationException()
+        [Fact(DisplayName = "Given non-existing sale id When updating sale Then throws InvalidOperationException")]
+        public async Task Handle_NonExistingSaleId_ThrowsInvalidOperationException()
         {
             // Given
             var command = UpdateSaleHandlerTestData.GenerateValidCommand();
 
             // Simulate no existing sale found
-            _saleRepository.GetBySaleNumberAsync(command.SaleNumber, Arg.Any<CancellationToken>())
+            _saleRepository.GetByIdAsync(command.Id, Arg.Any<CancellationToken>())
                 .Returns((Sale)null);
 
             // When
@@ -102,7 +101,7 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
 
             // Then
             await act.Should().ThrowAsync<InvalidOperationException>()
-                .WithMessage($"Sale with number {command.SaleNumber} not found");
+                .WithMessage($"Sale with identifier {command.Id} not found");
         }
 
         /// <summary>
@@ -115,13 +114,13 @@ namespace Ambev.DeveloperEvaluation.Unit.Application
             var command = UpdateSaleHandlerTestData.GenerateValidCommand();
             var existentSale = new Sale
             {
-                Id = Guid.NewGuid(),
+                Id = command.Id,
                 SaleNumber = command.SaleNumber,
                 SaleDate = DateTime.Now,
                 // Populate other fields accordingly
             };
 
-            _saleRepository.GetBySaleNumberAsync(command.SaleNumber, Arg.Any<CancellationToken>())
+            _saleRepository.GetByIdAsync(command.Id, Arg.Any<CancellationToken>())
                 .Returns(existentSale);
 
             // When

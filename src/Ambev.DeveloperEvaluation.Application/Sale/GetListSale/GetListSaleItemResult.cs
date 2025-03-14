@@ -1,11 +1,15 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetSale;
+namespace Ambev.DeveloperEvaluation.Application.Sale.GetListSale;
 
 /// <summary>
-/// API response model for Sale items in GetSale operation
+/// Represents the response returned after successfully retrieve sale list .
 /// </summary>
-public class GetSaleItemResponse
+/// <remarks>
+/// This response contains the unique identifier of the retrieved sale,
+/// which can be used for subsequent operations or reference.
+/// </remarks>
+public class GetListSaleItemResult
 {
     /// <summary>
     ///     Unique sale item identifier.

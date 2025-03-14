@@ -43,5 +43,5 @@ public class GetSaleItemResult
     /// <summary>
     ///     Total amount for the item after applying discount.
     /// </summary>
-    public decimal Total => Quantity * UnitPrice - Discount;
+    public decimal Total { get; set; }
 }

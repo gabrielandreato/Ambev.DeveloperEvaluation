@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,6 +44,47 @@ public class SalesRepository : ISaleRepository
     {
         return await _context.Sale.Include(s => s.Items).FirstOrDefaultAsync(s => s.Id == id, cancellationToken);
     }
+
+    /// <summary>
+    ///     Retrieves all sales from the database
+    /// </summary>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>A list of all sales</returns>
+    public async Task<IEnumerable<Sale>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.Sale.Include(s => s.Items).ToListAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// Retrieves a list of sales from the database with optional filtering parameters.
+    /// </summary>
+    /// <param name="saleNumber">Optional sale number to filter results.</param>
+    /// <param name="isCanceled">Optional flag to filter by canceled status.</param>
+    /// <param name="branch">Optional branch to filter results by.</param>
+    /// <param name="customer">Optional customer to filter results by.</param>
+    /// <param name="saleDateFrom">Optional starting date to filter sales from.</param>
+    /// <param name="saleDateTo">Optional end date to filter sales until.</param>
+    /// <param name="cancellationToken">Cancellation token to cancel the async operation if needed.</param>
+    /// <returns>An enumerable list of sales that match the given filtering parameters, including associated items.</returns>
+    /// <remarks>
+    /// This method queries the database for sales records. If filtering parameters are provided,
+    /// the query will apply the corresponding filters to narrow down the results. The method supports
+    /// optional parameters, which when omitted, will not be applied in filtering the dataset.
+    /// </remarks>
+    public async Task<IEnumerable<Sale>> GetListAsync(string? saleNumber = null, bool? isCanceled = null,
+        Branch? branch = null, Customer? customer = null, DateTime? saleDateFrom = null, DateTime? saleDateTo = null,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Sale
+            .Where(x => 
+                (saleNumber == null || saleNumber == x.SaleNumber)
+                && (isCanceled == null || isCanceled == x.IsCancelled)
+                && (branch == null || branch == x.Branch)
+                && (customer == null || customer == x.Customer)
+                && (saleDateFrom == null || x.SaleDate >= saleDateFrom)
+                && (saleDateTo == null || x.SaleDate <= saleDateTo)
+            ).Include(s => s.Items).ToListAsync(cancellationToken);
+    }
     
     /// <summary>
     ///     Retrieves a sale Number its unique identifier
@@ -55,15 +97,6 @@ public class SalesRepository : ISaleRepository
         return await _context.Sale.FirstOrDefaultAsync(s => s.SaleNumber == saleNumber, cancellationToken);
     }
 
-    /// <summary>
-    ///     Retrieves all sales from the database
-    /// </summary>
-    /// <param name="cancellationToken">Cancellation token</param>
-    /// <returns>A list of all sales</returns>
-    public async Task<IEnumerable<Sale>> GetAllAsync(CancellationToken cancellationToken = default)
-    {
-        return await _context.Sale.Include(s => s.Items).ToListAsync(cancellationToken);
-    }
 
     /// <summary>
     ///     Updates an existing sale in the database

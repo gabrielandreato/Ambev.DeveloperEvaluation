@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.GetListSale;
 using Ambev.DeveloperEvaluation.Application.Sale.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 using Ambev.DeveloperEvaluation.WebApi.Common;
@@ -90,7 +91,7 @@ public class SaleController: BaseController
     }
 
     /// <summary>
-    /// Update a sale
+    /// Get a sale
     /// </summary>
     /// <param name="id">Unique identifier sale</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -117,6 +118,28 @@ public class SaleController: BaseController
             Success = true,
             Message = "Sale retrieved successfully",
             Data = _mapper.Map<GetSaleResponse>(response)
+        });
+    }
+    
+    /// <summary>
+    /// Get a list of sales with optional filters
+    /// </summary>
+    /// <param name="request">The request containing optional filters</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>A list of sales based on applied filters</returns>
+    [HttpGet]
+    [ProducesResponseType(typeof(ApiResponseWithData<GetListSaleResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetListSale([FromQuery] GetListSaleRequest request, CancellationToken cancellationToken)
+    {
+        var command = _mapper.Map<GetListSaleCommand>(request);
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<List<GetListSaleResponse>>
+        {
+            Success = true,
+            Message = "Sales retrieved successfully",
+            Data = _mapper.Map<List<GetListSaleResponse>>(response)
         });
     }
 }
