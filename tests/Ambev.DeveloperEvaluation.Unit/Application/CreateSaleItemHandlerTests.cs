@@ -1,4 +1,4 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSaleItem;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.TestData;
@@ -10,17 +10,17 @@ using Xunit;
 namespace Ambev.DeveloperEvaluation.Unit.Application;
 
 /// <summary>
-/// Contains unit tests for the <see cref="CreateSaleItemHandler"/> class.
+///     Contains unit tests for the <see cref="CreateSaleItemHandler" /> class.
 /// </summary>
 public class CreateSaleItemHandlerTests
 {
-    private readonly ISaleRepository _saleRepository;
-    private readonly IMapper _mapper;
     private readonly CreateSaleItemHandler _handler;
+    private readonly IMapper _mapper;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
-    /// Initializes a new instance of <see cref="CreateSaleItemHandlerTests"/> class.
-    /// Sets up test dependencies.
+    ///     Initializes a new instance of <see cref="CreateSaleItemHandlerTests" /> class.
+    ///     Sets up test dependencies.
     /// </summary>
     public CreateSaleItemHandlerTests()
     {
@@ -30,7 +30,7 @@ public class CreateSaleItemHandlerTests
     }
 
     /// <summary>
-    /// Tests that adding a valid sale item succeeds.
+    ///     Tests that adding a valid sale item succeeds.
     /// </summary>
     [Fact(DisplayName = "Given valid sale item When added to sale Then returns success")]
     public async Task Handle_ValidRequest_AddsSaleItem()
@@ -43,12 +43,12 @@ public class CreateSaleItemHandlerTests
             .Returns(existingSale);
 
         var expectedSaleItem = new SaleItem
-        {
-            Product = command.Product,
-            Quantity = command.Quantity,
-            UnitPrice = command.UnitPrice,
-            Discount = command.Discount
-        };
+        (
+            new Guid(),
+            command.Product,
+            command.Quantity,
+            command.UnitPrice
+        );
 
         _mapper.Map<SaleItem>(command).Returns(expectedSaleItem);
 
@@ -68,7 +68,7 @@ public class CreateSaleItemHandlerTests
     }
 
     /// <summary>
-    /// Tests that adding a sale item to a non-existing sale throws exception.
+    ///     Tests that adding a sale item to a non-existing sale throws exception.
     /// </summary>
     [Fact(DisplayName = "Given non-existing sale id When adding sale item Then throws InvalidOperationException")]
     public async Task Handle_NonExistingSaleId_ThrowsInvalidOperationException()

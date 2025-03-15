@@ -4,19 +4,34 @@ using AutoMapper;
 using FluentValidation;
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSaleItem;
 
+/// <summary>
+///     Handler for processing CreateSaleItemCommand requests
+/// </summary>
 public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, CreateSaleItemResult>
 {
-    private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
+    private readonly ISaleRepository _saleRepository;
 
+    /// <summary>
+    ///     Initializes a new instance of CreateSaleItemHandler
+    /// </summary>
+    /// <param name="saleRepository">The sale repository</param>
+    /// <param name="mapper">The AutoMapper instance</param>
+    /// <param name="validator">The validator for CreateSaleItemCommand</param>
     public CreateSaleItemHandler(ISaleRepository saleRepository, IMapper mapper)
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
     }
 
+    /// <summary>
+    ///     Handles the CreateSaleItemCommand request
+    /// </summary>
+    /// <param name="command">The CreateSaleItem command</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The created sale details</returns>
     public async Task<CreateSaleItemResult> Handle(CreateSaleItemCommand command, CancellationToken cancellationToken)
     {
         var validator = new CreateSaleItemCommandValidator();
@@ -29,7 +44,7 @@ public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, Crea
         if (sale == null)
             throw new InvalidOperationException($"Sale with ID {command.SaleId} not found");
 
-        var saleItem = _mapper.Map<Domain.Entities.SaleItem>(command);
+        var saleItem = _mapper.Map<SaleItem>(command);
         sale.Items.Add(saleItem);
 
         await _saleRepository.UpdateAsync(sale, cancellationToken);

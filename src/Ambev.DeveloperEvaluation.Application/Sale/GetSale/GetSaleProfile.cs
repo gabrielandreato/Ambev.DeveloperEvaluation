@@ -1,17 +1,18 @@
-﻿using AutoMapper;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Sale.GetSale;
 
 /// <summary>
-/// Profile for mapping between Sale entity and GetSaleResponse
+///     Profile for mapping between domain entities and their respective representation in Application Layer
+///     Used to get sale operation.
 /// </summary>
-public class GetSaleProfile: Profile
+public class GetSaleProfile : Profile
 {
     public GetSaleProfile()
     {
         CreateMap<Domain.Entities.Sale, GetSaleResult>();
-        CreateMap<Domain.Entities.SaleItem, GetSaleItemResult>();
-        
+        CreateMap<SaleItem, GetSaleItemResult>();
+
     }
-    
 }

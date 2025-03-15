@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.CreateSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sale.DeleteSale;
 using Ambev.DeveloperEvaluation.Application.Sale.DeleteSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sale.GetListSale;
@@ -18,11 +19,11 @@ namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale;
 
 public class SaleController : BaseController
 {
-    private readonly IMediator _mediator;
     private readonly IMapper _mapper;
+    private readonly IMediator _mediator;
 
     /// <summary>
-    /// Initializes a new instance of SaleController
+    ///     Initializes a new instance of SaleController
     /// </summary>
     /// <param name="mediator">The mediator instance</param>
     /// <param name="mapper">The AutoMapper instance</param>
@@ -33,7 +34,7 @@ public class SaleController : BaseController
     }
 
     /// <summary>
-    /// Creates a new sale
+    ///     Creates a new sale
     /// </summary>
     /// <param name="request">The sale creation request</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -62,7 +63,7 @@ public class SaleController : BaseController
     }
 
     /// <summary>
-    /// Update a sale
+    ///     Update a sale
     /// </summary>
     /// <param name="id">Unique identifier sale</param>
     /// <param name="request">The sale update request</param>
@@ -95,7 +96,7 @@ public class SaleController : BaseController
     }
 
     /// <summary>
-    /// Get a sale
+    ///     Get a sale
     /// </summary>
     /// <param name="id">Unique identifier sale</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -105,7 +106,7 @@ public class SaleController : BaseController
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetSale([FromRoute] Guid id, CancellationToken cancellationToken)
     {
-        var request = new GetSaleRequest() { Id = id };
+        var request = new GetSaleRequest { Id = id };
 
         var validator = new GetSaleRequestValidator();
         var validationResult = await validator.ValidateAsync(request, cancellationToken);
@@ -126,7 +127,7 @@ public class SaleController : BaseController
     }
 
     /// <summary>
-    /// Get a list of sales with optional filters
+    ///     Get a list of sales with optional filters
     /// </summary>
     /// <param name="request">The request containing optional filters</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -149,7 +150,7 @@ public class SaleController : BaseController
     }
 
     /// <summary>
-    /// Delete a sale
+    ///     Delete a sale
     /// </summary>
     /// <param name="id">Unique identifier of the sale</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -171,7 +172,7 @@ public class SaleController : BaseController
 
 
     /// <summary>
-    /// Adds a new item to an existing sale
+    ///     Adds a new item to an existing sale
     /// </summary>
     /// <param name="saleId">The ID of the sale to which the item should be added</param>
     /// <param name="request">The request containing item details to be added</param>
@@ -202,7 +203,7 @@ public class SaleController : BaseController
     }
 
     /// <summary>
-    /// Delete a sale item 
+    ///     Delete a sale item
     /// </summary>
     /// <param name="id">Unique identifier of the sale item </param>
     /// <param name="cancellationToken">Cancellation token</param>

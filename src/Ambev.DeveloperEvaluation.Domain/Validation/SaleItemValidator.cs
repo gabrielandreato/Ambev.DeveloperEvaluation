@@ -11,7 +11,9 @@ public class SaleItemValidator : AbstractValidator<SaleItem>
             .IsInEnum().WithMessage("Product is not valid.");
 
         RuleFor(item => item.Quantity)
-            .GreaterThan(0).WithMessage("Quantity must be greater than zero.");
+            .GreaterThan(0)
+            .LessThan(20)
+            .WithMessage("Quantity must be greater than zero and less than 20.");
 
         RuleFor(item => item.UnitPrice)
             .GreaterThanOrEqualTo(0).WithMessage("Unit price must be greater than or equal to zero.");

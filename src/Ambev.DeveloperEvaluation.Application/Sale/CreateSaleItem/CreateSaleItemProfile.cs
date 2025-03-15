@@ -1,19 +1,26 @@
-﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities;
 using AutoMapper;
 
 namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSaleItem;
 
 /// <summary>
-/// Profile for mapping between Sale item entity and CreateSaleItemResponse
+///     Profile for mapping between domain entities and their respective representation in Application Layer
+///     Used to create item sale operation.
 /// </summary>
-public class CreateSaleItemProfile: Profile
+public class CreateSaleItemProfile : Profile
 {
     /// <summary>
-    /// Initializes the mappings for CreateSaleItem operation
+    ///     Initializes the mappings for CreateSaleItem operation
     /// </summary>
     public CreateSaleItemProfile()
     {
-        CreateMap<CreateSaleItemCommand, Domain.Entities.SaleItem>();
-        CreateMap<Domain.Entities.SaleItem, CreateSaleItemResult>();
+        CreateMap<CreateSaleItemCommand, SaleItem>()
+            .ConstructUsing(cmd => new SaleItem(
+                cmd.SaleId,
+                cmd.Product,
+                cmd.Quantity,
+                cmd.UnitPrice));
+
+        CreateMap<SaleItem, CreateSaleItemResult>();
     }
 }

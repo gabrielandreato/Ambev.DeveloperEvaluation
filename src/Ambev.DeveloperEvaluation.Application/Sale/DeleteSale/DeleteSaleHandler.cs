@@ -1,33 +1,39 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+using FluentValidation;
 using MediatR;
 
-namespace Ambev.DeveloperEvaluation.Application.Sale.DeleteSale
+namespace Ambev.DeveloperEvaluation.Application.Sale.DeleteSale;
+
+/// <summary>
+///     Handler for processing DeleteSaleCommand requests
+/// </summary>
+public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, bool>
 {
+    private readonly ISaleRepository _saleRepository;
+
     /// <summary>
-    /// Handler for processing DeleteSaleCommand requests
+    ///     Initializes a new instance of DeleteSaleHandler
     /// </summary>
-    public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, bool>
+    /// <param name="saleRepository">The sale repository</param>
+    public DeleteSaleHandler(ISaleRepository saleRepository)
     {
-        private readonly ISaleRepository _saleRepository;
+        _saleRepository = saleRepository;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of DeleteSaleHandler
-        /// </summary>
-        /// <param name="saleRepository">The sale repository</param>
-        public DeleteSaleHandler(ISaleRepository saleRepository)
-        {
-            _saleRepository = saleRepository;
-        }
+    /// <summary>
+    ///     Handles the DeleteSaleCommand request
+    /// </summary>
+    /// <param name="command">The DeleteSale command providing Sale Id</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>True when object was successfully deleted or false when object not found.</returns>
+    public async Task<bool> Handle(DeleteSaleCommand command, CancellationToken cancellationToken)
+    {
+        var validator = new DeleteSaleCommandValidator();
 
-        /// <summary>
-        /// Handles the DeleteSaleCommand request
-        /// </summary>
-        /// <param name="request">The DeleteSale command providing Sale Id</param>
-        /// <param name="cancellationToken">Cancellation token</param>
-        /// <returns>An object with the deleted id</returns>
-        public async Task<bool> Handle(DeleteSaleCommand request, CancellationToken cancellationToken)
-        {
-            return await _saleRepository.DeleteAsync(request.Id, cancellationToken);
-        }
+        var validationResult = await validator.ValidateAsync(command, cancellationToken);
+
+        if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
+
+        return await _saleRepository.DeleteAsync(command.Id, cancellationToken);
     }
 }

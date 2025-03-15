@@ -32,7 +32,7 @@ public class SaleValidatorTest
     {
         // Arrange
         var sale = SaleTestData.GenerateValidSale();
-        sale.SaleNumber = string.Empty; // Invalid
+        sale.SaleNumber = string.Empty;
 
         // Act
         var result = _validator.TestValidate(sale);
@@ -46,7 +46,7 @@ public class SaleValidatorTest
     {
         // Arrange
         var sale = SaleTestData.GenerateValidSale();
-        sale.SaleDate = DateTime.Now.AddDays(1); 
+        sale.SaleDate = DateTime.Now.AddDays(1);
 
         // Act
         var result = _validator.TestValidate(sale);
@@ -60,7 +60,7 @@ public class SaleValidatorTest
     {
         // Arrange
         var sale = SaleTestData.GenerateValidSale();
-        sale.Items.Clear(); // Invalid
+        sale.Items.Clear();
 
         // Act
         var result = _validator.TestValidate(sale);

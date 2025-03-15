@@ -1,17 +1,20 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
+using Ambev.DeveloperEvaluation.Domain.Validation;
 using Ambev.DeveloperEvaluation.Unit.Domain.Entities.TestData;
+using FluentAssertions;
 using Xunit;
 
 namespace Ambev.DeveloperEvaluation.Unit.Domain.Entities;
 
 /// <summary>
-/// Contains unit tests for the Sale entity class.
-/// Tests cover the addition of items, cancellation, and scenarios of validation.
+///     Contains unit tests for the Sale entity class.
+///     Tests cover cancellation and scenarios of item addition and validation.
 /// </summary>
 public class SaleTests
 {
     /// <summary>
-    /// Tests that when a sale is canceled, it reflects the canceled status.
+    ///     Tests that when a sale is canceled, it reflects the canceled status.
     /// </summary>
     [Fact(DisplayName = "Sale should be marked as canceled when cancelled")]
     public void Given_ActiveSale_When_Cancelled_Then_StatusShouldBeCancelled()
@@ -23,49 +26,63 @@ public class SaleTests
         sale.CancelSale();
 
         // Assert
-        Assert.True(sale.IsCancelled);
+        sale.IsCancelled.Should().BeTrue();
     }
 
     /// <summary>
-    /// Tests that discounts are correctly applied based on item quantity.
+    ///     Tests that discounts are correctly applied based on item quantity.
     /// </summary>
     [Theory(DisplayName = "Correct discount should be applied based on quantity")]
-    [InlineData(3, 0)]    // No discount
-    [InlineData(4, 0.1)]  // 10% discount
+    [InlineData(3, 0)] // No discount
+    [InlineData(4, 0.1)] // 10% discount
     [InlineData(10, 0.2)] // 20% discount
-    public void Given_ItemQuantity_When_Added_Then_DiscountShouldBeAppliedCorrectly(int quantity, decimal expectedDiscountRate)
+    public void Given_ItemQuantity_When_Created_Then_DiscountShouldBeAppliedCorrectly(int quantity,
+        decimal expectedDiscountRate)
     {
-        // Arrange
+        // Assume Arrangement
         var sale = SaleTestData.GenerateValidSale();
-        var productId = Guid.NewGuid();
         var product = Product.ProductA;
         var unitPrice = 100m;
-        sale.Items.Clear(); // Reset items
 
         // Act
-        sale.AddItem(productId, product, quantity, unitPrice);
+        var saleItem = new SaleItem(sale.Id, product, quantity, unitPrice);
+        sale.Items.Add(saleItem);
 
         // Assert
-        var addedItem = Assert.Single(sale.Items);
-        var expectedDiscount = unitPrice * expectedDiscountRate;
-        Assert.Equal(expectedDiscount, addedItem.Discount);
+        var expectedDiscount = unitPrice * expectedDiscountRate * quantity;
+        saleItem.Discount.Should().Be(expectedDiscount);
     }
 
     /// <summary>
-    /// Tests that the addition of items over the allowed quantity throws an exception.
+    ///     Tests that the addition of items over the allowed quantity throws an exception.
     /// </summary>
-    [Fact(DisplayName = "Adding more than 20 identical items should throw an exception")]
-    public void Given_TooManyItems_When_Added_Then_ShouldThrowException()
+    [Fact(DisplayName = "Creating more than 20 identical items should throw an exception")]
+    public void Given_TooManyItems_When_Created_Then_ShouldThrowException()
     {
         // Arrange
         var sale = SaleTestData.GenerateValidSale();
-        var productId = Guid.NewGuid();
         var product = Product.ProductA;
         var unitPrice = 100m;
-        sale.Items.Clear(); // Reset items
 
         // Act & Assert
         Assert.Throws<InvalidOperationException>(() =>
-            sale.AddItem(productId, product, 21, unitPrice));
+            new SaleItem(sale.Id, product, 21, unitPrice));
+    }
+
+    /// <summary>
+    ///     Tests that a sale is valid according to the SaleValidator rules.
+    /// </summary>
+    [Fact(DisplayName = "Sale validation should pass")]
+    public void Given_ValidSale_When_Validated_Then_ShouldBeValid()
+    {
+        // Arrange
+        var sale = SaleTestData.GenerateValidSale();
+        var validator = new SaleValidator();
+
+        // Act
+        var result = validator.Validate(sale);
+
+        // Assert
+        result.IsValid.Should().BeTrue();
     }
 }

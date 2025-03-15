@@ -1,6 +1,4 @@
-﻿
-
-using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -8,15 +6,15 @@ using MediatR;
 namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
 
 /// <summary>
-/// Handler for processing CreateSaleCommand requests
+///     Handler for processing CreateSaleCommand requests
 /// </summary>
-public class CreateSaleHandler: IRequestHandler<CreateSaleCommand, CreateSaleResult>
+public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleResult>
 {
-    private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
-    
+    private readonly ISaleRepository _saleRepository;
+
     /// <summary>
-    /// Initializes a new instance of CreateSaleHandler
+    ///     Initializes a new instance of CreateSaleHandler
     /// </summary>
     /// <param name="saleRepository">The sale repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
@@ -25,11 +23,10 @@ public class CreateSaleHandler: IRequestHandler<CreateSaleCommand, CreateSaleRes
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
-
     }
-    
+
     /// <summary>
-    /// Handles the CreateSaleCommand request
+    ///     Handles the CreateSaleCommand request
     /// </summary>
     /// <param name="command">The CreateSale command</param>
     /// <param name="cancellationToken">Cancellation token</param>
@@ -42,22 +39,22 @@ public class CreateSaleHandler: IRequestHandler<CreateSaleCommand, CreateSaleRes
         if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
 
         var sale = _mapper.Map<Domain.Entities.Sale>(command);
-        
+
         var existingSale = await _saleRepository.GetBySaleNumberAsync(command.SaleNumber, cancellationToken);
         if (existingSale != null)
             throw new InvalidOperationException($"Sale with number {command.SaleNumber} already exists");
-        
+
         InicializeData(sale);
 
         var createdSale = await _saleRepository.CreateAsync(sale, cancellationToken);
-        
+
         var result = _mapper.Map<CreateSaleResult>(createdSale);
-        
+
         return result;
     }
 
     private static void InicializeData(Domain.Entities.Sale sale)
     {
-        sale.IsCancelled  = false;
+        sale.IsCancelled = false;
     }
 }
