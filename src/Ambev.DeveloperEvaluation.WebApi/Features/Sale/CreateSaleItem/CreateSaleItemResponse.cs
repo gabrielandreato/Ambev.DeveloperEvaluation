@@ -1,4 +1,4 @@
-﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
+﻿namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSaleItem;
 
 /// <summary>
 /// API response model for CreateSaleItem operation

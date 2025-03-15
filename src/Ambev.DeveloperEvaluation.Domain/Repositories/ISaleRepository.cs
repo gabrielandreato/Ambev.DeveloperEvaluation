@@ -74,5 +74,13 @@ public interface ISaleRepository
         Branch? branch = null, Customer? customer = null, DateTime? saleDateFrom = null, DateTime? saleDateTo = null,
         CancellationToken cancellationToken = default);
 
+    /// <summary>
+    ///     Deletes a sale item from the database
+    /// </summary>
+    /// <param name="id">The unique identifier of the sale item to delete</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>True if the sale item was deleted, false if not found</returns>
+    Task<bool> DeleteItemAsync(Guid id, CancellationToken cancellationToken = default);
+
 
 }

@@ -29,7 +29,7 @@ public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, Crea
         if (sale == null)
             throw new InvalidOperationException($"Sale with ID {command.SaleId} not found");
 
-        var saleItem = _mapper.Map<SaleItem>(command);
+        var saleItem = _mapper.Map<Domain.Entities.SaleItem>(command);
         sale.Items.Add(saleItem);
 
         await _saleRepository.UpdateAsync(sale, cancellationToken);

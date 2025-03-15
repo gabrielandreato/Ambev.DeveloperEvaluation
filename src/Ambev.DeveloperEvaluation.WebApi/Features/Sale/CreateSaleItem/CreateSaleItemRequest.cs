@@ -1,6 +1,6 @@
 ﻿using Ambev.DeveloperEvaluation.Domain.Enums;
 
-namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSaleItem;
 
 /// <summary>
 /// Represents a request to create a new sale item in the system.

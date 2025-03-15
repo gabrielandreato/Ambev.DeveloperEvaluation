@@ -14,7 +14,6 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.DeleteSale
         /// Initializes a new instance of DeleteSaleHandler
         /// </summary>
         /// <param name="saleRepository">The sale repository</param>
-        /// <param name="mapper">The AutoMapper instance</param>
         public DeleteSaleHandler(ISaleRepository saleRepository)
         {
             _saleRepository = saleRepository;
