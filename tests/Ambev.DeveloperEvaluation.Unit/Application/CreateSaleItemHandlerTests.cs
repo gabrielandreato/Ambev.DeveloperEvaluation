@@ -17,8 +17,8 @@ public class CreateSaleItemHandlerTests
 {
     private readonly CreateSaleItemHandler _handler;
     private readonly IMapper _mapper;
-    private readonly ISaleRepository _saleRepository;
     private readonly IRabbitMQClient _rabbitMqClient;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
     ///     Initializes a new instance of <see cref="CreateSaleItemHandlerTests" /> class.
@@ -29,7 +29,7 @@ public class CreateSaleItemHandlerTests
         _saleRepository = Substitute.For<ISaleRepository>();
         _mapper = Substitute.For<IMapper>();
         _rabbitMqClient = Substitute.For<IRabbitMQClient>();
-        _handler = new CreateSaleItemHandler(_saleRepository, _mapper,_rabbitMqClient);
+        _handler = new CreateSaleItemHandler(_saleRepository, _mapper, _rabbitMqClient);
     }
 
     /// <summary>

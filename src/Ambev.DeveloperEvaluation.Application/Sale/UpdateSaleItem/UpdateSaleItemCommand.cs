@@ -19,7 +19,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.UpdateSaleItem;
 public class UpdateSaleItemCommand : IRequest<UpdateSaleItemResult>
 {
     /// <summary>
-    /// Sale item unique identifiert
+    ///     Sale item unique identifiert
     /// </summary>
     public Guid Id { get; set; }
 

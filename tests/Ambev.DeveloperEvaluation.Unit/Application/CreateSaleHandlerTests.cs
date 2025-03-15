@@ -18,8 +18,8 @@ public class CreateSaleHandlerTests
 {
     private readonly CreateSaleHandler _handler;
     private readonly IMapper _mapper;
-    private readonly ISaleRepository _saleRepository;
     private readonly IRabbitMQClient _rabbitMQClient;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CreateSaleHandlerTests" /> class.
@@ -123,12 +123,12 @@ public class CreateSaleHandlerTests
         _saleRepository.CreateAsync(Arg.Any<Sale>(), Arg.Any<CancellationToken>())
             .Returns(sale);
 
-        var saleResult = new CreateSaleResult()
+        var saleResult = new CreateSaleResult
         {
-            Id = saleId,
+            Id = saleId
         };
         _mapper.Map<CreateSaleResult>(sale).Returns(saleResult);
-        
+
         // When
         await _handler.Handle(command, CancellationToken.None);
 

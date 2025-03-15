@@ -2,18 +2,17 @@
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetSale;
 
-public class GetSaleRequestValidator: AbstractValidator<GetSaleRequest>
+public class GetSaleRequestValidator : AbstractValidator<GetSaleRequest>
 {
     /// <summary>
-    /// Validates instances of <see cref="GetSaleRequest"/>.
+    ///     Validates instances of <see cref="GetSaleRequest" />.
     /// </summary>
     /// <remarks>
-    /// Validation rules include:
-    /// - Id: Required.
+    ///     Validation rules include:
+    ///     - Id: Required.
     /// </remarks>
     public GetSaleRequestValidator()
     {
         RuleFor(x => x.Id).NotEmpty().WithMessage("User ID is required");
     }
-    
 }

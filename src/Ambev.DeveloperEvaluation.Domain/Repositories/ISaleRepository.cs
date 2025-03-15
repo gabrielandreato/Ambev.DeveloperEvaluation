@@ -45,7 +45,7 @@ public interface ISaleRepository
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>True if the sale was deleted, false if not found</returns>
     Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default);
-    
+
     // <summary>
     /// Retrieves a sale by its sale number
     /// </summary>
@@ -55,7 +55,7 @@ public interface ISaleRepository
     Task<Sale?> GetBySaleNumberAsync(string saleNumber, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Retrieves a list of sales from the database with optional filtering parameters.
+    ///     Retrieves a list of sales from the database with optional filtering parameters.
     /// </summary>
     /// <param name="saleNumber">Optional sale number to filter results.</param>
     /// <param name="isCanceled">Optional flag to filter by canceled status.</param>
@@ -66,9 +66,9 @@ public interface ISaleRepository
     /// <param name="cancellationToken">Cancellation token to cancel the async operation if needed.</param>
     /// <returns>An enumerable list of sales that match the given filtering parameters, including associated items.</returns>
     /// <remarks>
-    /// This method queries the database for sales records. If filtering parameters are provided,
-    /// the query will apply the corresponding filters to narrow down the results. The method supports
-    /// optional parameters, which when omitted, will not be applied in filtering the dataset.
+    ///     This method queries the database for sales records. If filtering parameters are provided,
+    ///     the query will apply the corresponding filters to narrow down the results. The method supports
+    ///     optional parameters, which when omitted, will not be applied in filtering the dataset.
     /// </remarks>
     Task<IEnumerable<Sale>> GetListAsync(string? saleNumber = null, bool? isCanceled = null,
         Branch? branch = null, Customer? customer = null, DateTime? saleDateFrom = null, DateTime? saleDateTo = null,
@@ -96,5 +96,4 @@ public interface ISaleRepository
     /// <param name="saleItem">The sale item to update</param>
     /// <param name="cancellationToken">Cancellation token</param>
     Task UpdateItemAsync(SaleItem saleItem, CancellationToken cancellationToken = default);
-
 }

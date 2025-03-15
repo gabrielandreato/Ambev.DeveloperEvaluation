@@ -4,6 +4,5 @@ public enum Customer
 {
     CustomerA = 1,
     CustomerB,
-    CustomerC,
-    
+    CustomerC
 }

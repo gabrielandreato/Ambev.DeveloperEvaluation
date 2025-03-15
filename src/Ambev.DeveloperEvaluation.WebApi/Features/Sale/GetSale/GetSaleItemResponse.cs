@@ -3,7 +3,7 @@
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetSale;
 
 /// <summary>
-/// API response model for Sale items in GetSale operation
+///     API response model for Sale items in GetSale operation
 /// </summary>
 public class GetSaleItemResponse
 {
@@ -11,6 +11,7 @@ public class GetSaleItemResponse
     ///     Unique sale item identifier.
     /// </summary>
     public Guid Id { get; set; }
+
     /// <summary>
     ///     External identifier for the sale.
     /// </summary>
@@ -19,7 +20,7 @@ public class GetSaleItemResponse
     /// <summary>
     ///     Product name (denormalized for better performance).
     /// </summary>
-    public Product Product { get;  set; }
+    public Product Product { get; set; }
 
     /// <summary>
     ///     Quantity of the product purchased.

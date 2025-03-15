@@ -1,7 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.UpdateSaleItem;
 using Ambev.DeveloperEvaluation.Domain.Client;
-using Ambev.DeveloperEvaluation.Domain.Entities;
-using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.TestData;
 using AutoMapper;
@@ -13,10 +11,10 @@ namespace Ambev.DeveloperEvaluation.Unit.Application;
 
 public class UpdateSaleItemHandlerTests
 {
-    private readonly IMapper _mapper;
-    private readonly ISaleRepository _saleRepository;
-    private readonly IRabbitMQClient _rabbitMqClient;
     private readonly UpdateSaleItemHandler _handler;
+    private readonly IMapper _mapper;
+    private readonly IRabbitMQClient _rabbitMqClient;
+    private readonly ISaleRepository _saleRepository;
 
     public UpdateSaleItemHandlerTests()
     {
@@ -46,7 +44,7 @@ public class UpdateSaleItemHandlerTests
             Product = existingItem.Product,
             Quantity = command.Quantity,
             UnitPrice = command.UnitPrice,
-            IsCancelled = existingItem.IsCancelled, // Ajuste conforme a lógica de negócio
+            IsCancelled = existingItem.IsCancelled // Ajuste conforme a lógica de negócio
         };
         _mapper.Map<UpdateSaleItemResult>(existingItem).Returns(saleItemResult);
 
@@ -56,7 +54,8 @@ public class UpdateSaleItemHandlerTests
         // Then
         result.Should().BeEquivalentTo(saleItemResult);
         await _saleRepository.Received(1).UpdateItemAsync(existingItem, Arg.Any<CancellationToken>());
-        await _rabbitMqClient.Received(1).BasicTestPublish("SaleItemUpdated", $"Sale item updated with success. Id: {existingItem.Id}");
+        await _rabbitMqClient.Received(1)
+            .BasicTestPublish("SaleItemUpdated", $"Sale item updated with success. Id: {existingItem.Id}");
     }
 
     [Fact(DisplayName = "Given cancelled sale item When updating Then throws InvalidOperationException")]
@@ -64,7 +63,7 @@ public class UpdateSaleItemHandlerTests
     {
         // Given
         var command = UpdateSaleItemHandlerTestData.GenerateValidCommand();
-        var cancelledItem = UpdateSaleItemHandlerTestData.GenerateMockSaleItem(command.Id, isCancelled: true);
+        var cancelledItem = UpdateSaleItemHandlerTestData.GenerateMockSaleItem(command.Id, true);
 
         _saleRepository.GetItemByIdAsync(command.Id, Arg.Any<CancellationToken>())
             .Returns(cancelledItem);

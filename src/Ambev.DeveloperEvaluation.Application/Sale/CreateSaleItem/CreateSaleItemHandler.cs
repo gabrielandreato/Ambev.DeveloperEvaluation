@@ -13,8 +13,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSaleItem;
 public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, CreateSaleItemResult>
 {
     private readonly IMapper _mapper;
-    private readonly ISaleRepository _saleRepository;
     private readonly IRabbitMQClient _rabbitMqClient;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
     ///     Initializes a new instance of CreateSaleItemHandler
@@ -52,7 +52,7 @@ public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, Crea
         sale.Items.Add(saleItem);
 
         await _saleRepository.UpdateAsync(sale, cancellationToken);
-        
+
         await _rabbitMqClient.BasicTestPublish("SaleItemCreated", $"Sale item created with success. Id: {saleItem.Id}");
 
         var result = _mapper.Map<CreateSaleItemResult>(saleItem);

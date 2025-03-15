@@ -12,8 +12,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
 public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleResult>
 {
     private readonly IMapper _mapper;
-    private readonly ISaleRepository _saleRepository;
     private readonly IRabbitMQClient _rabbitMqClient;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
     ///     Initializes a new instance of CreateSaleHandler

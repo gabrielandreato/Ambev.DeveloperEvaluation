@@ -56,7 +56,7 @@ public class SalesRepository : ISaleRepository
     }
 
     /// <summary>
-    /// Retrieves a list of sales from the database with optional filtering parameters.
+    ///     Retrieves a list of sales from the database with optional filtering parameters.
     /// </summary>
     /// <param name="saleNumber">Optional sale number to filter results.</param>
     /// <param name="isCanceled">Optional flag to filter by canceled status.</param>
@@ -67,16 +67,16 @@ public class SalesRepository : ISaleRepository
     /// <param name="cancellationToken">Cancellation token to cancel the async operation if needed.</param>
     /// <returns>An enumerable list of sales that match the given filtering parameters, including associated items.</returns>
     /// <remarks>
-    /// This method queries the database for sales records. If filtering parameters are provided,
-    /// the query will apply the corresponding filters to narrow down the results. The method supports
-    /// optional parameters, which when omitted, will not be applied in filtering the dataset.
+    ///     This method queries the database for sales records. If filtering parameters are provided,
+    ///     the query will apply the corresponding filters to narrow down the results. The method supports
+    ///     optional parameters, which when omitted, will not be applied in filtering the dataset.
     /// </remarks>
     public async Task<IEnumerable<Sale>> GetListAsync(string? saleNumber = null, bool? isCanceled = null,
         Branch? branch = null, Customer? customer = null, DateTime? saleDateFrom = null, DateTime? saleDateTo = null,
         CancellationToken cancellationToken = default)
     {
         return await _context.Sale
-            .Where(x => 
+            .Where(x =>
                 (saleNumber == null || saleNumber == x.SaleNumber)
                 && (isCanceled == null || isCanceled == x.IsCancelled)
                 && (branch == null || branch == x.Branch)
@@ -85,7 +85,7 @@ public class SalesRepository : ISaleRepository
                 && (saleDateTo == null || x.SaleDate <= saleDateTo)
             ).Include(s => s.Items).ToListAsync(cancellationToken);
     }
-    
+
     /// <summary>
     ///     Retrieves a sale Number its unique identifier
     /// </summary>
@@ -108,7 +108,7 @@ public class SalesRepository : ISaleRepository
         _context.Sale.Update(sale);
         await _context.SaveChangesAsync(cancellationToken);
     }
-    
+
     /// <summary>
     ///     Updates an existing sale item in the database
     /// </summary>
@@ -136,7 +136,7 @@ public class SalesRepository : ISaleRepository
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
-    
+
     /// <summary>
     ///     Deletes a sale item from the database
     /// </summary>
@@ -153,7 +153,7 @@ public class SalesRepository : ISaleRepository
         await _context.SaveChangesAsync(cancellationToken);
         return true;
     }
-    
+
     /// <summary>
     ///     Retrieves a sale item by its unique identifier
     /// </summary>

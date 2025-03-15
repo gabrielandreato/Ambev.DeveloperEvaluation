@@ -10,8 +10,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.DeleteSale;
 /// </summary>
 public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, bool>
 {
-    private readonly ISaleRepository _saleRepository;
     private readonly IRabbitMQClient _rabbitMqClient;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
     ///     Initializes a new instance of DeleteSaleHandler
@@ -37,9 +37,9 @@ public class DeleteSaleHandler : IRequestHandler<DeleteSaleCommand, bool>
         var validationResult = await validator.ValidateAsync(command, cancellationToken);
 
         if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
-        
+
         await _rabbitMqClient.BasicTestPublish("SaleDeleted", $"Sale deleted with success. Id: {command.Id}");
-        
+
         return await _saleRepository.DeleteAsync(command.Id, cancellationToken);
     }
 }

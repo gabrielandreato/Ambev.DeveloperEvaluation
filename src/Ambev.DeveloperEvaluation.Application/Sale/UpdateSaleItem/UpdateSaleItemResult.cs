@@ -16,7 +16,7 @@ public class UpdateSaleItemResult
     /// </summary>
     /// <value>A GUID that uniquely identifies the updated sale item in the system.</value>
     public Guid Id { get; set; }
-    
+
     /// <summary>
     ///     External identifier for the sale.
     /// </summary>

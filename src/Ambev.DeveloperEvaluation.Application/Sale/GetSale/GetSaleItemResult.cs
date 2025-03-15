@@ -3,11 +3,11 @@
 namespace Ambev.DeveloperEvaluation.Application.Sale.GetSale;
 
 /// <summary>
-/// Represents the response returned after successfully retrieve a sale.
+///     Represents the response returned after successfully retrieve a sale.
 /// </summary>
 /// <remarks>
-/// This response contains the unique identifier of the retrieved sale,
-/// which can be used for subsequent operations or reference.
+///     This response contains the unique identifier of the retrieved sale,
+///     which can be used for subsequent operations or reference.
 /// </remarks>
 public class GetSaleItemResult
 {
@@ -15,6 +15,7 @@ public class GetSaleItemResult
     ///     Unique sale item identifier.
     /// </summary>
     public Guid Id { get; set; }
+
     /// <summary>
     ///     External identifier for the sale.
     /// </summary>
@@ -23,7 +24,7 @@ public class GetSaleItemResult
     /// <summary>
     ///     Product name (denormalized for better performance).
     /// </summary>
-    public Product Product { get;  set; }
+    public Product Product { get; set; }
 
     /// <summary>
     ///     Quantity of the product purchased.

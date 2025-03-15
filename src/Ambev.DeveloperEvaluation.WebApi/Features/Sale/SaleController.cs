@@ -227,7 +227,7 @@ public class SaleController : BaseController
     }
 
     /// <summary>
-    ///     Update a sale item 
+    ///     Update a sale item
     /// </summary>
     /// <param name="id">sale item identifier</param>
     /// <param name="request">The request containing item details to be added</param>

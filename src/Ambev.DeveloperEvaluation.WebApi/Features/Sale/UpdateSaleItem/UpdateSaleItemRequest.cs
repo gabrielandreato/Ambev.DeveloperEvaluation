@@ -22,9 +22,10 @@ public class UpdateSaleItemRequest
     ///     Unit price of the product.
     /// </summary>
     public decimal UnitPrice { get; set; }
-    
+
     /// <summary>
     ///     Indicates whether the sale item has been canceled.
     /// </summary>
-    [DefaultValue(false)]public bool IsCancelled { get; set; }
+    [DefaultValue(false)]
+    public bool IsCancelled { get; set; }
 }

@@ -1,8 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.UpdateSaleItem;
 using Ambev.DeveloperEvaluation.Domain.Entities;
-using Bogus;
-using System;
 using Ambev.DeveloperEvaluation.Domain.Enums;
+using Bogus;
 
 namespace Ambev.DeveloperEvaluation.Unit.Application.TestData;
 

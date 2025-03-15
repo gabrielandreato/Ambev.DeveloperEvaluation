@@ -13,8 +13,8 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.UpdateSaleItem;
 public class UpdateSaleItemHandler : IRequestHandler<UpdateSaleItemCommand, UpdateSaleItemResult>
 {
     private readonly IMapper _mapper;
-    private readonly ISaleRepository _saleRepository;
     private readonly IRabbitMQClient _rabbitMqClient;
+    private readonly ISaleRepository _saleRepository;
 
     /// <summary>
     ///     Initializes a new instance of UpdateSaleItemHandler
@@ -48,11 +48,11 @@ public class UpdateSaleItemHandler : IRequestHandler<UpdateSaleItemCommand, Upda
         ValidateAsync(command, existent);
 
         _mapper.Map(command, existent);
-        
+
         InicializeData(existent!);
 
         await _saleRepository.UpdateItemAsync(existent!, cancellationToken);
-        
+
         await NotifyEventsAsync(existent!);
 
         var result = _mapper.Map<UpdateSaleItemResult>(existent);
@@ -70,16 +70,16 @@ public class UpdateSaleItemHandler : IRequestHandler<UpdateSaleItemCommand, Upda
     {
         if (item == null) throw new InvalidOperationException($"Sale with ID {command.Id} not found");
 
-        if (item.IsCancelled) 
-            throw new InvalidOperationException($"Its not possible to update a cancelled sale item");
+        if (item.IsCancelled)
+            throw new InvalidOperationException("Its not possible to update a cancelled sale item");
     }
 
     private async Task NotifyEventsAsync(SaleItem saleItem)
     {
-        if(saleItem.IsCancelled)
-            await _rabbitMqClient.BasicTestPublish("SaleItemCancelled", $"Sale item cancelled with success. Id: {saleItem.Id}");
+        if (saleItem.IsCancelled)
+            await _rabbitMqClient.BasicTestPublish("SaleItemCancelled",
+                $"Sale item cancelled with success. Id: {saleItem.Id}");
 
         await _rabbitMqClient.BasicTestPublish("SaleItemUpdated", $"Sale item updated with success. Id: {saleItem.Id}");
     }
-    
 }

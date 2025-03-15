@@ -133,9 +133,9 @@ public class UpdateSaleHandlerTests
         _mapper.Received(1).Map(command, existentSale);
         await _saleRepository.Received(1).UpdateAsync(existentSale, Arg.Any<CancellationToken>());
     }
-    
+
     /// <summary>
-    /// Tests that attempting to update a cancelled sale throws an InvalidOperationException.
+    ///     Tests that attempting to update a cancelled sale throws an InvalidOperationException.
     /// </summary>
     [Fact(DisplayName = "Given a cancelled sale When updating Then throws InvalidOperationException")]
     public async Task Handle_CancelledSale_ThrowsInvalidOperationException()
@@ -156,7 +156,7 @@ public class UpdateSaleHandlerTests
             SaleNumber = command.SaleNumber,
             IsCancelled = true,
             Customer = Customer.CustomerA,
-            Branch = Branch.BranchA,
+            Branch = Branch.BranchA
         };
 
         _saleRepository.GetByIdAsync(command.Id, Arg.Any<CancellationToken>())

@@ -13,8 +13,8 @@ namespace Ambev.DeveloperEvaluation.Unit.Application;
 public class DeleteSaleHandlerTests
 {
     private readonly DeleteSaleHandler _handler;
-    private readonly ISaleRepository _saleRepository;
     private readonly IRabbitMQClient _rabbitMqClient;
+    private readonly ISaleRepository _saleRepository;
 
 
     /// <summary>

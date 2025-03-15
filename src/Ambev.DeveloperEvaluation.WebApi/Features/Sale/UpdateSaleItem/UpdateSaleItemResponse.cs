@@ -3,7 +3,7 @@
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSaleItem;
 
 /// <summary>
-/// API response model for UpdateSaleItem operation
+///     API response model for UpdateSaleItem operation
 /// </summary>
 public class UpdateSaleItemResponse
 {
@@ -12,7 +12,7 @@ public class UpdateSaleItemResponse
     /// </summary>
     /// <value>A GUID that uniquely identifies the updated sale item in the system.</value>
     public Guid Id { get; set; }
-    
+
     /// <summary>
     ///     External identifier for the sale.
     /// </summary>

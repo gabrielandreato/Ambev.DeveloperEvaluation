@@ -4,5 +4,5 @@ public enum Product
 {
     ProductA = 1,
     ProductB,
-    ProductC,
+    ProductC
 }

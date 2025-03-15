@@ -8,7 +8,6 @@ namespace Ambev.DeveloperEvaluation.Domain.Entities;
 /// </summary>
 public class SaleItem : BaseEntity
 {
-    
     /// <summary>
     ///     Creates a new sale item instance with automatic discount application.
     /// </summary>
@@ -47,7 +46,7 @@ public class SaleItem : BaseEntity
     ///     Discount applied to the product.
     /// </summary>
     public decimal Discount { get; private set; }
-    
+
     /// <summary>
     ///     Indicates whether the sale item has been canceled.
     /// </summary>
@@ -75,5 +74,4 @@ public class SaleItem : BaseEntity
     {
         if (Quantity > 20) throw new InvalidOperationException("Quantity must be greater than 20");
     }
-    
 }

@@ -3,19 +3,19 @@
 namespace Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
 
 /// <summary>
-/// Validator for UpdateSaleCommand that defines validation rules for user Updation command.
+///     Validator for UpdateSaleCommand that defines validation rules for user Updation command.
 /// </summary>
-public class UpdateSaleCommandValidator: AbstractValidator<UpdateSaleCommand>
+public class UpdateSaleCommandValidator : AbstractValidator<UpdateSaleCommand>
 {
     /// <summary>
-    /// Validates instances of <see cref="UpdateSaleCommand"/>.
+    ///     Validates instances of <see cref="UpdateSaleCommand" />.
     /// </summary>
     /// <remarks>
-    /// Validation rules include:
-    /// - SaleNumber: Required, length between 5 and 20 characters.
-    /// - SaleDate: Must be in the past or present.
-    /// - Customer: Must be a valid enumeration value.
-    /// - Branch: Must be a valid enumeration value.
+    ///     Validation rules include:
+    ///     - SaleNumber: Required, length between 5 and 20 characters.
+    ///     - SaleDate: Must be in the past or present.
+    ///     - Customer: Must be a valid enumeration value.
+    ///     - Branch: Must be a valid enumeration value.
     /// </remarks>
     public UpdateSaleCommandValidator()
     {
