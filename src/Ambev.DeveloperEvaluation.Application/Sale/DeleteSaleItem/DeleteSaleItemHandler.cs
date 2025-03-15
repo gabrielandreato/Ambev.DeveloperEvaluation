@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Domain.Client;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentValidation;
 using MediatR;
 
@@ -10,14 +11,17 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.DeleteSaleItem;
 public class DeleteSaleItemHandler : IRequestHandler<DeleteSaleItemCommand, bool>
 {
     private readonly ISaleRepository _saleRepository;
+    private readonly IRabbitMQClient _rabbitMqClient;
 
     /// <summary>
     ///     Initializes a new instance of DeleteSaleItemHandler
     /// </summary>
     /// <param name="saleRepository">The sale repository</param>
-    public DeleteSaleItemHandler(ISaleRepository saleRepository)
+    /// <param name="rabbitMqClient">rabbit mq client, to publish messages in message broker instance</param>
+    public DeleteSaleItemHandler(ISaleRepository saleRepository, IRabbitMQClient rabbitMqClient)
     {
         _saleRepository = saleRepository;
+        _rabbitMqClient = rabbitMqClient;
     }
 
     /// <summary>
@@ -34,6 +38,10 @@ public class DeleteSaleItemHandler : IRequestHandler<DeleteSaleItemCommand, bool
 
         if (!validationResult.IsValid) throw new ValidationException(validationResult.Errors);
 
-        return await _saleRepository.DeleteItemAsync(command.Id, cancellationToken);
+        var deleteItemAsync = await _saleRepository.DeleteItemAsync(command.Id, cancellationToken);
+        
+        await _rabbitMqClient.BasicTestPublish("SaleItemDeleted", $"Sale item deleted with success. Id: {command.Id}");
+
+        return deleteItemAsync;
     }
 }

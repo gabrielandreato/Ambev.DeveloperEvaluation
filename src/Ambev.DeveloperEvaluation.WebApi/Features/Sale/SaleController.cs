@@ -5,12 +5,14 @@ using Ambev.DeveloperEvaluation.Application.Sale.DeleteSaleItem;
 using Ambev.DeveloperEvaluation.Application.Sale.GetListSale;
 using Ambev.DeveloperEvaluation.Application.Sale.GetSale;
 using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
+using Ambev.DeveloperEvaluation.Application.Sale.UpdateSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Common;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.CreateSaleItem;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetListSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.GetSale;
 using Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSale;
+using Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSaleItem;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -178,7 +180,7 @@ public class SaleController : BaseController
     /// <param name="request">The request containing item details to be added</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A response indicating the outcome of the operation</returns>
-    [HttpPost("{saleId}/Items")]
+    [HttpPost("{saleId}/Item")]
     [ProducesResponseType(typeof(ApiResponseWithData<CreateSaleItemResponse>), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateSaleItem([FromRoute] Guid saleId, [FromBody] CreateSaleItemRequest request,
@@ -208,7 +210,7 @@ public class SaleController : BaseController
     /// <param name="id">Unique identifier of the sale item </param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A response indicating the result of the delete operation</returns>
-    [HttpDelete("Items/{id}")]
+    [HttpDelete("Item/{id}")]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status204NoContent)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteSaleItem([FromRoute] Guid id, CancellationToken cancellationToken)
@@ -222,5 +224,35 @@ public class SaleController : BaseController
                 { Success = false, Message = "Failed to delete sale item, sale item not found" });
 
         return NoContent();
+    }
+
+    /// <summary>
+    ///     Update a sale item 
+    /// </summary>
+    /// <param name="id">sale item identifier</param>
+    /// <param name="request">The request containing item details to be added</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>A response indicating the outcome of the operation</returns>
+    [HttpPut("Item/{id}")]
+    [ProducesResponseType(typeof(ApiResponseWithData<UpdateSaleItemResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateSaleItem([FromRoute] Guid id, [FromBody] UpdateSaleItemRequest request,
+        CancellationToken cancellationToken)
+    {
+        var validator = new UpdateSaleItemRequestValidator();
+        var validationResult = await validator.ValidateAsync(request, cancellationToken);
+
+        if (!validationResult.IsValid) return BadRequest(validationResult.Errors);
+
+        var command = _mapper.Map<UpdateSaleItemCommand>(request);
+        command.Id = id;
+        var response = await _mediator.Send(command, cancellationToken);
+
+        return Ok(new ApiResponseWithData<UpdateSaleItemResponse>
+        {
+            Success = true,
+            Message = "Sale Item updated successfully",
+            Data = _mapper.Map<UpdateSaleItemResponse>(response)
+        });
     }
 }

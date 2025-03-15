@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Repositories;
+﻿using Ambev.DeveloperEvaluation.Domain.Client;
+using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
 using MediatR;
@@ -12,6 +13,7 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
 {
     private readonly IMapper _mapper;
     private readonly ISaleRepository _saleRepository;
+    private readonly IRabbitMQClient _rabbitMqClient;
 
     /// <summary>
     ///     Initializes a new instance of CreateSaleHandler
@@ -19,10 +21,12 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
     /// <param name="saleRepository">The sale repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
     /// <param name="validator">The validator for CreateSaleCommand</param>
-    public CreateSaleHandler(ISaleRepository saleRepository, IMapper mapper)
+    /// <param name="rabbitMqClient">rabbit mq client, to publish messages in message broker instance</param>
+    public CreateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IRabbitMQClient rabbitMqClient)
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
+        _rabbitMqClient = rabbitMqClient;
     }
 
     /// <summary>
@@ -49,6 +53,8 @@ public class CreateSaleHandler : IRequestHandler<CreateSaleCommand, CreateSaleRe
         var createdSale = await _saleRepository.CreateAsync(sale, cancellationToken);
 
         var result = _mapper.Map<CreateSaleResult>(createdSale);
+
+        await _rabbitMqClient.BasicTestPublish("SaleCreated", $"Sale created with success. Id: {result.Id}");
 
         return result;
     }

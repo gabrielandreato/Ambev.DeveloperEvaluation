@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Enums;
+﻿using System.ComponentModel;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 
 namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSale;
 
@@ -29,6 +30,6 @@ public class UpdateSaleRequest
     /// <summary>
     /// Indicates whether the sale has been canceled.
     /// </summary>
-    public bool IsCancelled { get; set; }
+    [DefaultValue(false)] public bool IsCancelled { get; set; }
     
 }

@@ -1,6 +1,7 @@
 ﻿
 
 using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.Domain.Client;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
@@ -15,6 +16,7 @@ public class UpdateSaleHandler: IRequestHandler<UpdateSaleCommand, UpdateSaleRes
 {
     private readonly ISaleRepository _saleRepository;
     private readonly IMapper _mapper;
+    private readonly IRabbitMQClient _rabbitMQClient;
     
     /// <summary>
     /// Initializes a new instance of UpdateSaleHandler
@@ -22,10 +24,12 @@ public class UpdateSaleHandler: IRequestHandler<UpdateSaleCommand, UpdateSaleRes
     /// <param name="saleRepository">The sale repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
     /// <param name="validator">The validator for UpdateSaleCommand</param>
-    public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper)
+    /// <param name="rabbitMqClient">rabbit mq client, to publish messages in message broker instance</param>
+    public UpdateSaleHandler(ISaleRepository saleRepository, IMapper mapper, IRabbitMQClient rabbitMqClient)
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
+        _rabbitMQClient = rabbitMqClient;
 
     }
     
@@ -44,16 +48,36 @@ public class UpdateSaleHandler: IRequestHandler<UpdateSaleCommand, UpdateSaleRes
         
         var existentSale = await _saleRepository.GetByIdAsync(command.Id, cancellationToken);
         
+        await ValidateAsync(command, cancellationToken, existentSale);
+
+        _mapper.Map(command, existentSale);
+        
+        await _saleRepository.UpdateAsync(existentSale!, cancellationToken);
+        
+        var result = _mapper.Map<UpdateSaleResult>(existentSale);
+
+        await NotifyEventsAsync(command);
+
+        return result;
+    }
+
+    private async Task ValidateAsync(UpdateSaleCommand command, CancellationToken cancellationToken, Domain.Entities.Sale? existentSale)
+    {
+
         if (existentSale == null)
             throw new InvalidOperationException($"Sale with identifier {command.Id} not found");
         
-        _mapper.Map(command, existentSale);
+        if (existentSale.IsCancelled)
+            throw new InvalidOperationException($"Its not possible to update a cancelled sale");
         
-        await _saleRepository.UpdateAsync(existentSale, cancellationToken);
-        
-        var result = _mapper.Map<UpdateSaleResult>(existentSale);
-        
-        return result;
+        var researchBySaleNumber = await _saleRepository.GetBySaleNumberAsync(command.SaleNumber, cancellationToken);
+        if (researchBySaleNumber != null)
+            throw new InvalidOperationException($"Sale with number {command.SaleNumber} already exists");
     }
     
+    private async Task NotifyEventsAsync(UpdateSaleCommand command)
+    {
+        await _rabbitMQClient.BasicTestPublish("SaleUpdated", $"A sale was updated. Id {command.Id}");
+        if (command.IsCancelled) await _rabbitMQClient.BasicTestPublish("SaleCancelled", $"A sale was cancelled. Id {command.Id}");
+    }
 }

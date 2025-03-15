@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.DeleteSale;
+using Ambev.DeveloperEvaluation.Domain.Client;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using FluentAssertions;
 using NSubstitute;
@@ -13,6 +14,8 @@ public class DeleteSaleHandlerTests
 {
     private readonly DeleteSaleHandler _handler;
     private readonly ISaleRepository _saleRepository;
+    private readonly IRabbitMQClient _rabbitMqClient;
+
 
     /// <summary>
     ///     Initializes a new instance of <see cref="DeleteSaleHandlerTests" /> class.
@@ -21,7 +24,8 @@ public class DeleteSaleHandlerTests
     public DeleteSaleHandlerTests()
     {
         _saleRepository = Substitute.For<ISaleRepository>();
-        _handler = new DeleteSaleHandler(_saleRepository);
+        _rabbitMqClient = Substitute.For<IRabbitMQClient>();
+        _handler = new DeleteSaleHandler(_saleRepository, _rabbitMqClient);
     }
 
     /// <summary>

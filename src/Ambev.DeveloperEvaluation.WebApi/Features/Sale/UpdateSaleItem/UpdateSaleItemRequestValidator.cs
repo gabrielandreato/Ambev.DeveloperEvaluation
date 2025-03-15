@@ -1,14 +1,14 @@
 ﻿using FluentValidation;
 
-namespace Ambev.DeveloperEvaluation.Application.Sale.CreateSaleItem;
+namespace Ambev.DeveloperEvaluation.WebApi.Features.Sale.UpdateSaleItem;
 
 /// <summary>
-///     Validator for CreateSaleItemCommand that defines validation rules for sale creation command.
+///     Validator for UpdateSaleItemRequest that defines validation rules for user creation.
 /// </summary>
-public class CreateSaleItemCommandValidator : AbstractValidator<CreateSaleItemCommand>
+public class UpdateSaleItemRequestValidator : AbstractValidator<UpdateSaleItemRequest>
 {
     /// <summary>
-    ///     Validates instances of <see cref="CreateSaleItemCommand" />.
+    ///     Validates instances of <see cref="UpdateSaleItemRequest" />.
     /// </summary>
     /// <remarks>
     ///     Validation rules include:
@@ -16,7 +16,7 @@ public class CreateSaleItemCommandValidator : AbstractValidator<CreateSaleItemCo
     ///     - Quantity: Must be greater than zero and less than 20.
     ///     - UnitPrice: Must be greater than or equal to zero.
     /// </remarks>
-    public CreateSaleItemCommandValidator()
+    public UpdateSaleItemRequestValidator()
     {
         RuleFor(item => item.Product).IsInEnum();
         RuleFor(item => item.Quantity).GreaterThan(0).LessThan(20);

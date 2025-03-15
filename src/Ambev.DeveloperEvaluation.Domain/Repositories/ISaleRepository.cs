@@ -82,5 +82,19 @@ public interface ISaleRepository
     /// <returns>True if the sale item was deleted, false if not found</returns>
     Task<bool> DeleteItemAsync(Guid id, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    ///     Retrieves a sale item by its unique identifier
+    /// </summary>
+    /// <param name="id">The unique identifier of the sale item</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    /// <returns>The sale item if found, null otherwise</returns>
+    Task<SaleItem?> GetItemByIdAsync(Guid id, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Updates an existing sale item in the database
+    /// </summary>
+    /// <param name="saleItem">The sale item to update</param>
+    /// <param name="cancellationToken">Cancellation token</param>
+    Task UpdateItemAsync(SaleItem saleItem, CancellationToken cancellationToken = default);
 
 }

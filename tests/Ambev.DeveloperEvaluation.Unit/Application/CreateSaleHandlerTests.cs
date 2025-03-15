@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.CreateSale;
+using Ambev.DeveloperEvaluation.Domain.Client;
 using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.TestData;
@@ -18,6 +19,7 @@ public class CreateSaleHandlerTests
     private readonly CreateSaleHandler _handler;
     private readonly IMapper _mapper;
     private readonly ISaleRepository _saleRepository;
+    private readonly IRabbitMQClient _rabbitMQClient;
 
     /// <summary>
     ///     Initializes a new instance of the <see cref="CreateSaleHandlerTests" /> class.
@@ -27,7 +29,8 @@ public class CreateSaleHandlerTests
     {
         _saleRepository = Substitute.For<ISaleRepository>();
         _mapper = Substitute.For<IMapper>();
-        _handler = new CreateSaleHandler(_saleRepository, _mapper);
+        _rabbitMQClient = Substitute.For<IRabbitMQClient>();
+        _handler = new CreateSaleHandler(_saleRepository, _mapper, _rabbitMQClient);
     }
 
     /// <summary>
@@ -120,6 +123,12 @@ public class CreateSaleHandlerTests
         _saleRepository.CreateAsync(Arg.Any<Sale>(), Arg.Any<CancellationToken>())
             .Returns(sale);
 
+        var saleResult = new CreateSaleResult()
+        {
+            Id = saleId,
+        };
+        _mapper.Map<CreateSaleResult>(sale).Returns(saleResult);
+        
         // When
         await _handler.Handle(command, CancellationToken.None);
 

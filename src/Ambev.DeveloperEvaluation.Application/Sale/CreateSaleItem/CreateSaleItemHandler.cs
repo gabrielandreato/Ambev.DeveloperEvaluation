@@ -1,4 +1,5 @@
-﻿using Ambev.DeveloperEvaluation.Domain.Entities;
+﻿using Ambev.DeveloperEvaluation.Domain.Client;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using AutoMapper;
 using FluentValidation;
@@ -13,6 +14,7 @@ public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, Crea
 {
     private readonly IMapper _mapper;
     private readonly ISaleRepository _saleRepository;
+    private readonly IRabbitMQClient _rabbitMqClient;
 
     /// <summary>
     ///     Initializes a new instance of CreateSaleItemHandler
@@ -20,10 +22,12 @@ public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, Crea
     /// <param name="saleRepository">The sale repository</param>
     /// <param name="mapper">The AutoMapper instance</param>
     /// <param name="validator">The validator for CreateSaleItemCommand</param>
-    public CreateSaleItemHandler(ISaleRepository saleRepository, IMapper mapper)
+    /// <param name="rabbitMqClient">rabbit mq client, to publish messages in message broker instance</param>
+    public CreateSaleItemHandler(ISaleRepository saleRepository, IMapper mapper, IRabbitMQClient rabbitMqClient)
     {
         _saleRepository = saleRepository;
         _mapper = mapper;
+        _rabbitMqClient = rabbitMqClient;
     }
 
     /// <summary>
@@ -48,6 +52,8 @@ public class CreateSaleItemHandler : IRequestHandler<CreateSaleItemCommand, Crea
         sale.Items.Add(saleItem);
 
         await _saleRepository.UpdateAsync(sale, cancellationToken);
+        
+        await _rabbitMqClient.BasicTestPublish("SaleItemCreated", $"Sale item created with success. Id: {saleItem.Id}");
 
         var result = _mapper.Map<CreateSaleItemResult>(saleItem);
 

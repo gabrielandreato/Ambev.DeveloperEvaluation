@@ -19,7 +19,8 @@ public class CreateSaleItemProfile : Profile
                 cmd.SaleId,
                 cmd.Product,
                 cmd.Quantity,
-                cmd.UnitPrice));
+                cmd.UnitPrice,
+                cmd.IsCancelled));
 
         CreateMap<SaleItem, CreateSaleItemResult>();
     }

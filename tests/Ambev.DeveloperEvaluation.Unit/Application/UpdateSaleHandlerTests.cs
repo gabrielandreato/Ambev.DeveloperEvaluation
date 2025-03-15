@@ -1,5 +1,7 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.UpdateSale;
+using Ambev.DeveloperEvaluation.Domain.Client;
 using Ambev.DeveloperEvaluation.Domain.Entities;
+using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.TestData;
 using AutoMapper;
@@ -27,7 +29,8 @@ public class UpdateSaleHandlerTests
     {
         _saleRepository = Substitute.For<ISaleRepository>();
         _mapper = Substitute.For<IMapper>();
-        _handler = new UpdateSaleHandler(_saleRepository, _mapper);
+        var rabbitMqClient = Substitute.For<IRabbitMQClient>();
+        _handler = new UpdateSaleHandler(_saleRepository, _mapper, rabbitMqClient);
     }
 
     [Fact(DisplayName = "Given valid sale data When updating sale Then returns success response")]
@@ -129,5 +132,41 @@ public class UpdateSaleHandlerTests
         // Then
         _mapper.Received(1).Map(command, existentSale);
         await _saleRepository.Received(1).UpdateAsync(existentSale, Arg.Any<CancellationToken>());
+    }
+    
+    /// <summary>
+    /// Tests that attempting to update a cancelled sale throws an InvalidOperationException.
+    /// </summary>
+    [Fact(DisplayName = "Given a cancelled sale When updating Then throws InvalidOperationException")]
+    public async Task Handle_CancelledSale_ThrowsInvalidOperationException()
+    {
+        // Given
+        var command = new UpdateSaleCommand
+        {
+            Id = Guid.NewGuid(),
+            SaleNumber = "ValidSaleNumber",
+            Customer = Customer.CustomerA,
+            Branch = Branch.BranchA,
+            IsCancelled = false
+        };
+
+        var cancelledSale = new Sale
+        {
+            Id = command.Id,
+            SaleNumber = command.SaleNumber,
+            IsCancelled = true,
+            Customer = Customer.CustomerA,
+            Branch = Branch.BranchA,
+        };
+
+        _saleRepository.GetByIdAsync(command.Id, Arg.Any<CancellationToken>())
+            .Returns(cancelledSale);
+
+        // When
+        var act = () => _handler.Handle(command, CancellationToken.None);
+
+        // Then
+        await act.Should().ThrowAsync<InvalidOperationException>()
+            .WithMessage("Its not possible to update a cancelled sale");
     }
 }
