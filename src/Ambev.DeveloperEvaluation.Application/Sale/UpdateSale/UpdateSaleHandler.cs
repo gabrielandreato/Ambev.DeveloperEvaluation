@@ -69,7 +69,7 @@ public class UpdateSaleHandler : IRequestHandler<UpdateSaleCommand, UpdateSaleRe
             throw new InvalidOperationException("Its not possible to update a cancelled sale");
 
         var researchBySaleNumber = await _saleRepository.GetBySaleNumberAsync(command.SaleNumber, cancellationToken);
-        if (researchBySaleNumber != null)
+        if (researchBySaleNumber != null &&  researchBySaleNumber.Id != command.Id)
             throw new InvalidOperationException($"Sale with number {command.SaleNumber} already exists");
     }
 
