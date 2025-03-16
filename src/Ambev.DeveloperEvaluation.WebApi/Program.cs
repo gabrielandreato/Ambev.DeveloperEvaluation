@@ -20,7 +20,7 @@ public class Program
         {
             Log.Information("Starting web application");
 
-            WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
+            var builder = WebApplication.CreateBuilder(args);
             builder.AddDefaultLogging();
 
             builder.Services.AddControllers();
@@ -71,12 +71,10 @@ public class Program
             app.MapControllers();
 
             app.Run();
-        }
-        catch (Exception ex)
+        } catch (Exception ex)
         {
             Log.Fatal(ex, "Application terminated unexpectedly");
-        }
-        finally
+        } finally
         {
             Log.CloseAndFlush();
         }
