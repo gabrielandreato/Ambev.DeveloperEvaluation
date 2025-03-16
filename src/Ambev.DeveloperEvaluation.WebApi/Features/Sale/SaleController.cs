@@ -135,19 +135,29 @@ public class SaleController : BaseController
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>A list of sales based on applied filters</returns>
     [HttpGet]
-    [ProducesResponseType(typeof(ApiResponseWithData<GetListSaleResponse>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(ApiResponseWithData<PagedList<GetListSaleResponse>>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(ApiResponse), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetListSale([FromQuery] GetListSaleRequest request,
         CancellationToken cancellationToken)
     {
         var command = _mapper.Map<GetListSaleCommand>(request);
         var response = await _mediator.Send(command, cancellationToken);
+        
+        var saleResults = _mapper.Map<List<GetListSaleResponse>>(response.Items);
 
-        return Ok(new ApiResponseWithData<List<GetListSaleResponse>>
+        var result = new PagedList<GetListSaleResponse>
+        {
+            Items = saleResults,
+            Page = response.Page,
+            PageSize = response.PageSize,
+            TotalCount = response.TotalCount
+        };
+
+        return Ok(new ApiResponseWithData<PagedList<GetListSaleResponse>>
         {
             Success = true,
             Message = "Sales retrieved successfully",
-            Data = _mapper.Map<List<GetListSaleResponse>>(response)
+            Data = result
         });
     }
 

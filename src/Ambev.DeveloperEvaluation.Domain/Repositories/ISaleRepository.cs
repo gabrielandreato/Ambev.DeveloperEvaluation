@@ -55,7 +55,7 @@ public interface ISaleRepository
     Task<Sale?> GetBySaleNumberAsync(string saleNumber, CancellationToken cancellationToken = default);
 
     /// <summary>
-    ///     Retrieves a list of sales from the database with optional filtering parameters.
+    ///     Retrieves a list of sales from the database with optional filtering, pagination, and sorting parameters.
     /// </summary>
     /// <param name="saleNumber">Optional sale number to filter results.</param>
     /// <param name="isCanceled">Optional flag to filter by canceled status.</param>
@@ -63,15 +63,22 @@ public interface ISaleRepository
     /// <param name="customer">Optional customer to filter results by.</param>
     /// <param name="saleDateFrom">Optional starting date to filter sales from.</param>
     /// <param name="saleDateTo">Optional end date to filter sales until.</param>
+    /// <param name="page">The page number for pagination (default is 0, which returns all results).</param>
+    /// <param name="pageSize">The number of items per page (default is 0, which returns all results).</param>
+    /// <param name="sortBy">Optional field name to sort results by. If null, no sorting is applied.</param>
+    /// <param name="isDesc">Indicates whether sorting should be descending (true) or ascending (false). Default is false.</param>
     /// <param name="cancellationToken">Cancellation token to cancel the async operation if needed.</param>
-    /// <returns>An enumerable list of sales that match the given filtering parameters, including associated items.</returns>
+    /// <returns>
+    ///     A paginated list of sales that match the given filtering parameters, including associated items.
+    /// </returns>
     /// <remarks>
     ///     This method queries the database for sales records. If filtering parameters are provided,
-    ///     the query will apply the corresponding filters to narrow down the results. The method supports
-    ///     optional parameters, which when omitted, will not be applied in filtering the dataset.
+    ///     the query will apply the corresponding filters to narrow down the results. 
+    ///     Additionally, sorting and pagination can be applied to organize and limit the dataset.
     /// </remarks>
-    Task<IEnumerable<Sale>> GetListAsync(string? saleNumber = null, bool? isCanceled = null,
+    Task<PagedList<Sale>> GetListAsync(string? saleNumber = null, bool? isCanceled = null,
         Branch? branch = null, Customer? customer = null, DateTime? saleDateFrom = null, DateTime? saleDateTo = null,
+        int page = 0, int pageSize = 0, string? sortBy = null, bool isDesc = false,
         CancellationToken cancellationToken = default);
 
     /// <summary>

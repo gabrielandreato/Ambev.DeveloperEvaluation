@@ -7,7 +7,7 @@ namespace Ambev.DeveloperEvaluation.Application.Sale.GetListSale;
 /// <summary>
 ///     Handler for processing GetListSaleCommand requests
 /// </summary>
-public class GetListSaleHandler : IRequestHandler<GetListSaleCommand, List<GetListSaleResult>>
+public class GetListSaleHandler : IRequestHandler<GetListSaleCommand, PagedList<GetListSaleResult>>
 {
     private readonly IMapper _mapper;
     private readonly ISaleRepository _saleRepository;
@@ -29,20 +29,23 @@ public class GetListSaleHandler : IRequestHandler<GetListSaleCommand, List<GetLi
     /// <param name="request">The GetListSale command providing optional filters</param>
     /// <param name="cancellationToken">Cancellation token</param>
     /// <returns>The retrieved sale list and their items</returns>
-    public async Task<List<GetListSaleResult>> Handle(GetListSaleCommand request, CancellationToken cancellationToken)
+    public async Task<PagedList<GetListSaleResult>> Handle(GetListSaleCommand request, CancellationToken cancellationToken)
     {
-        var sale = await _saleRepository.GetListAsync(
-            request.SaleNumber,
-            request.IsCanceled,
-            request.Branch,
-            request.Customer,
-            request.SaleDateFrom,
-            request.SaleDateTo,
-            cancellationToken
-        );
+        var sale = await _saleRepository.GetListAsync(request.SaleNumber, request.IsCanceled, request.Branch,
+            request.Customer, request.SaleDateFrom, request.SaleDateTo, request.Page, request.PageSize, request.SortBy,
+            request.IsDesc, cancellationToken);
 
-        var result = _mapper.Map<List<GetListSaleResult>>(sale);
+        var saleResults = _mapper.Map<List<GetListSaleResult>>(sale.Items);
+
+        var result = new PagedList<GetListSaleResult>
+        {
+            Items = saleResults,
+            Page = sale.Page,
+            PageSize = sale.PageSize,
+            TotalCount = sale.TotalCount
+        };
 
         return result;
+
     }
 }

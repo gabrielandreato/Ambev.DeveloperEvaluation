@@ -12,6 +12,7 @@ public class GetListSaleProfile : Profile
     public GetListSaleProfile()
     {
         CreateMap<Domain.Entities.Sale, GetListSaleResult>();
+        CreateMap<PagedList<Domain.Entities.Sale>,  GetListSaleResult>();
         CreateMap<SaleItem, GetListSaleItemResult>();
 
     }

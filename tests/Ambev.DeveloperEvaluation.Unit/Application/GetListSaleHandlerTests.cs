@@ -1,4 +1,5 @@
 ﻿using Ambev.DeveloperEvaluation.Application.Sale.GetListSale;
+using Ambev.DeveloperEvaluation.Domain.Entities;
 using Ambev.DeveloperEvaluation.Domain.Enums;
 using Ambev.DeveloperEvaluation.Domain.Repositories;
 using Ambev.DeveloperEvaluation.Unit.Application.TestData;
@@ -22,96 +23,95 @@ public class GetListSaleHandlerTests
         _handler = new GetListSaleHandler(_saleRepository, _mapper);
     }
 
-    [Fact(DisplayName = "When getting sales list without filters Then returns all sales")]
-    public async Task Handle_WithoutFilters_ShouldReturnAllSales()
+    [Fact(DisplayName = "When getting sales list without filters Then returns all sales with pagination")]
+    public async Task Handle_WithoutFilters_ShouldReturnAllSalesWithPagination()
     {
         // Given
-        var command = new GetListSaleCommand();
+        var command = new GetListSaleCommand { Page = 1, PageSize = 5 };
         var salesList = GetListSaleHandlerTestData.GenerateMockSales();
-
-        _saleRepository.GetListAsync(
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                Arg.Any<CancellationToken>())
-            .Returns(salesList);
-
-        var expectedResult = new List<GetListSaleResult>();
-        foreach (var sale in salesList)
-            expectedResult.Add(new GetListSaleResult
-            {
-                SaleNumber = sale.SaleNumber,
-                SaleDate = sale.SaleDate,
-                Customer = sale.Customer,
-                Branch = sale.Branch
-            });
-
-        _mapper.Map<List<GetListSaleResult>>(salesList).Returns(expectedResult);
-
-        // When
-        var result = await _handler.Handle(command, CancellationToken.None);
-
-        // Then
-        result.Should().NotBeNullOrEmpty();
-        result.Should().HaveCount(salesList.Count);
-        await _saleRepository.Received(1).GetListAsync(
-            null, null, null, null, null, null, Arg.Any<CancellationToken>());
-    }
-
-    [Fact(DisplayName = "When getting sales list with filters Then returns filtered sales")]
-    public async Task Handle_WithFilters_ShouldReturnFilteredSales()
-    {
-        // Given
-        var command = new GetListSaleCommand
+        var pagedSales = new PagedList<Sale>
         {
-            SaleNumber = "12345",
-            IsCanceled = false,
-            Branch = Branch.BranchA,
-            Customer = Customer.CustomerA,
-            SaleDateFrom = DateTime.Now.AddDays(-30),
-            SaleDateTo = DateTime.Now
+            Items = salesList.Take(command.PageSize).ToList(),
+            Page = command.Page,
+            PageSize = command.PageSize,
+            TotalCount = salesList.Count
         };
 
-        var filteredSales = GetListSaleHandlerTestData.GenerateFilteredMockSales();
+        _saleRepository.GetListAsync(Arg.Any<string>(), Arg.Any<bool?>(), Arg.Any<Branch?>(), Arg.Any<Customer?>(),
+            Arg.Any<DateTime?>(), Arg.Any<DateTime?>(), command.Page, command.PageSize, Arg.Any<string>(),
+            Arg.Any<bool>(), Arg.Any<CancellationToken>()).Returns(pagedSales);
 
-        _saleRepository.GetListAsync(
-                command.SaleNumber,
-                command.IsCanceled,
-                command.Branch,
-                command.Customer,
-                command.SaleDateFrom,
-                command.SaleDateTo,
-                Arg.Any<CancellationToken>())
-            .Returns(filteredSales);
+        var expectedResult = salesList.Select(sale => new GetListSaleResult
+        {
+            SaleNumber = sale.SaleNumber,
+            SaleDate = sale.SaleDate,
+            Customer = sale.Customer,
+            Branch = sale.Branch
+        }).Take(command.PageSize).ToList();
 
-        var expectedResult = new List<GetListSaleResult>();
-        foreach (var sale in filteredSales)
-            expectedResult.Add(new GetListSaleResult
-            {
-                SaleNumber = sale.SaleNumber,
-                SaleDate = sale.SaleDate,
-                Customer = sale.Customer,
-                Branch = sale.Branch
-            });
-
-        _mapper.Map<List<GetListSaleResult>>(filteredSales).Returns(expectedResult);
+        _mapper.Map<List<GetListSaleResult>>(pagedSales.Items).Returns(expectedResult);
 
         // When
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Then
-        result.Should().NotBeNullOrEmpty();
-        result.Should().HaveCount(filteredSales.Count);
-        await _saleRepository.Received(1).GetListAsync(
-            command.SaleNumber,
-            command.IsCanceled,
-            command.Branch,
-            command.Customer,
-            command.SaleDateFrom,
-            command.SaleDateTo,
-            Arg.Any<CancellationToken>());
+        result.Items.Should().NotBeNullOrEmpty();
+        result.Items.Should().HaveCount(command.PageSize);
+        result.Page.Should().Be(command.Page);
+        result.PageSize.Should().Be(command.PageSize);
+        result.TotalCount.Should().Be(salesList.Count);
     }
+
+    [Fact(DisplayName = "When getting sales list with pagination Then returns correct page")]
+    public async Task Handle_WithPagination_ShouldReturnCorrectPage()
+    {
+        // Given
+        var command = new GetListSaleCommand { Page = 2, PageSize = 3 };
+
+        const int totalItems = 10;
+        var salesList = GetListSaleHandlerTestData.GenerateMockSales(totalItems);
+
+        var pagedSales = new PagedList<Sale>
+        {
+            Items = salesList.Skip((command.Page - 1) * command.PageSize).Take(command.PageSize).ToList(),
+            Page = command.Page,
+            PageSize = command.PageSize,
+            TotalCount = totalItems
+        };
+
+        _saleRepository.GetListAsync(
+                Arg.Is<string?>(s => s == command.SaleNumber),
+                Arg.Is<bool?>(b => b == command.IsCanceled),
+                Arg.Is<Branch?>(b => b == command.Branch),
+                Arg.Is<Customer?>(c => c == command.Customer),
+                Arg.Is<DateTime?>(d => d == command.SaleDateFrom),
+                Arg.Is<DateTime?>(d => d == command.SaleDateTo),
+                Arg.Is<int>(p => p == command.Page),
+                Arg.Is<int>(ps => ps == command.PageSize),
+                Arg.Is<string?>(s => s == command.SortBy),
+                Arg.Is<bool>(b => b == command.IsDesc),
+                Arg.Any<CancellationToken>())
+            .Returns(Task.FromResult(pagedSales));
+
+        var expectedResult = pagedSales.Items.Select(sale => new GetListSaleResult
+        {
+            SaleNumber = sale.SaleNumber,
+            SaleDate = sale.SaleDate,
+            Customer = sale.Customer,
+            Branch = sale.Branch,
+        }).ToList();
+
+        _mapper.Map<List<GetListSaleResult>>(pagedSales.Items).Returns(expectedResult);
+
+        // When
+        var result = await _handler.Handle(command, CancellationToken.None);
+
+        // Then
+        result.Items.Should().NotBeNullOrEmpty();
+        result.Items.Should().HaveCount(command.PageSize);
+        result.Page.Should().Be(command.Page);
+        result.PageSize.Should().Be(command.PageSize);
+        result.TotalCount.Should().Be(salesList.Count);
+    }
+
 }
